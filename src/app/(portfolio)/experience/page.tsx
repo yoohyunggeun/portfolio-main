@@ -4,8 +4,8 @@ export const metadata = { title: "Experience" };
 
 const roles = [
   ["개발과 데이터 연동", "Java 기반 API와 화면을 개발하고, 연동에 필요한 JSON 데이터를 매핑했습니다.", "기술 성장 과정", "/experience/evolution"],
-  ["환경 구성과 시스템 이관", "AWS EC2와 Tomcat 환경을 구성하고, 클라우드 이관과 오픈을 지원했습니다.", "실무 기술 보기", "/skills"],
-  ["오픈 지원과 장애 대응", "운영 로그를 분석해 오류에 대응하고, 개발자와 사용자를 교육했습니다.", "실무 기술 보기", "/skills"],
+  ["환경 구성과 시스템 이관", "AWS EC2와 Tomcat 환경을 구성하고, 기존 시스템의 클라우드 이관과 오픈을 지원했습니다.", "실무 기술 보기", "/skills"],
+  ["운영과 기술 지원", "운영 로그를 분석해 데이터·출력 오류에 대응하고, 개발자와 사용자를 교육했습니다.", "실무 기술 보기", "/skills"],
 ];
 
 export default function Experience() {
