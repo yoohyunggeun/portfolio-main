@@ -5,7 +5,8 @@ import { personalProjects } from "@/content/projects/personal";
 
 const areas = {
   frontend: { title: "Frontend", description: "화면 구성, 사용자 인터랙션과 상태 관리 과정을 정리합니다.", candidates: [] },
-  backend: { title: "Backend", description: "API, 데이터 모델, 인증·권한과 테스트를 설계합니다.", candidates: ["업무 관리 API", "서버 모니터링 시스템"] },
+  backend: { title: "Backend", description: "API, 데이터 모델, 인증·권한과 테스트를 설계합니다.", candidates: ["업무 관리 API"] },
+  server: { title: "Server", description: "서버 구성과 운영 흐름을 정리합니다.", candidates: ["서버 구성·모니터링"] },
   "ai-llm": { title: "AI / LLM", description: "AI 활용 흐름과 검색 출처, 응답 품질을 검토합니다.", candidates: ["AI 문서 검색 시스템", "AI 제작 로그 요약"] },
 };
 

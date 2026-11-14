@@ -1,31 +1,44 @@
 import Link from "next/link";
 
+
+function LockedCards() {
+  return <>
+    <p className="sr-only">대표 목록은 관리자만 볼 수 있습니다.</p>
+    <div className="home-list grid gap-3 sm:grid-cols-2" aria-hidden="true">
+      {Array.from({ length: 4 }, (_, index) => <div className="panel locked-project" key={index}><span /><span /></div>)}
+    </div>
+  </>;
+}
+
 export default function Home() {
-  return <div className="home">
+  return <div className="home home-v18">
     <section className="hero">
       <div>
-        <p className="eyebrow hero-label"><span className="desktop-copy">JAVA EXPERIENCE, MODERN DEVELOPMENT</span><span className="mobile-copy">CAREER + DEVELOPMENT</span></p>
-        <h1>시스템을 이해하고,<br />서비스를 구현합니다.</h1>
-        <p className="lede"><span className="desktop-copy">Java 기반 기업 시스템 구축·연동·운영 경험을 바탕으로<br className="desktop-break" /> 웹 개발과 AI 연동으로 역량을 넓혀갑니다.</span><span className="mobile-copy">Java 실무 경험을 기반으로<br />현대적 웹 개발로 확장합니다.</span></p>
+        <p className="eyebrow">웹 개발 · 서버 구축·운영 · 고객 기술 제안</p>
+        <h1>고객 앞에서는 해결책을, 코드 앞에서는 구현을, 현장에서는 운영을 맡습니다.</h1>
         <div className="actions">
-          <Link href="/experience" className="button primary desktop-copy">경력 살펴보기 <span aria-hidden="true">→</span></Link>
-          <Link href="/lab" className="button desktop-copy">개인 프로젝트 <span aria-hidden="true">→</span></Link>
-          <Link href="/experience" className="button primary mobile-copy">경력 살펴보기 <span aria-hidden="true">→</span></Link>
+          <Link href="/experience" className="button primary">경력 살펴보기 →</Link>
+          <Link href="/lab" className="button">개인 프로젝트 →</Link>
         </div>
       </div>
-      <aside className="panel overview" aria-label="포트폴리오 구성">
-        <h2 className="desktop-copy">CAREER × CODE</h2>
-        <Link href="/experience">
-          <span className="eyebrow"><span className="desktop-copy">01 / </span>PROFESSIONAL</span>
-          <strong><span className="desktop-copy">구축 · 연동 · 운영</span><span className="mobile-copy">기업 시스템 경험</span></strong>
-          <span className="muted desktop-copy">Java / Oracle / WAS / AWS EC2</span><span className="muted mobile-copy">경력과 직접 수행 역할 →</span>
-        </Link>
-        <Link href="/lab" className="desktop-copy">
-          <span className="eyebrow lab-label">02 / DEVELOPMENT LAB</span>
-          <strong>Frontend · Backend · AI</strong>
-          <span className="muted">JavaScript / React / Spring Boot 확장</span>
-        </Link>
+      <aside className="panel concept-card home-capabilities">
+        <h2>역량 한눈에 보기</h2>
+        <p className="eyebrow">실무 · 구축 · 연동 · 운영</p>
+        <p className="eyebrow lab-label">개인 · Frontend · Backend · Server · AI / LLM</p>
       </aside>
+    </section>
+    <section className="home-representative" aria-labelledby="work-featured">
+      <div className="section-heading">
+        <h2 id="work-featured">대표 실무 프로젝트</h2>
+      </div>
+      <LockedCards />
+    </section>
+    <aside className="panel home-access-notice"><h2>프로젝트 상세 자료</h2><p className="muted">상세 자료 열람 요청은 준비 중입니다.</p></aside>
+    <section className="home-representative" aria-labelledby="lab-featured">
+      <div className="section-heading">
+        <h2 id="lab-featured">대표 개인 프로젝트</h2>
+      </div>
+      <LockedCards />
     </section>
   </div>;
 }

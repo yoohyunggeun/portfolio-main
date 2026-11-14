@@ -324,3 +324,31 @@ h2 { font-size: 1.2rem; font-weight: 700; }
 .project-code pre { overflow-x:auto; margin-top:.75rem; padding:.9rem; border-radius:.55rem; background:var(--background); font-size:.85rem; }
 .project-code pre:focus-visible { outline:2px solid var(--accent); }
 @media(max-width:640px) { .personal-detail { grid-template-columns:minmax(0,1fr); } }
+
+.brand .brand-wordmark { width:clamp(9rem,15vw,11rem); height:auto; }
+.home-v18 .hero { grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:2rem; }
+.home-v18 .hero h1 { font-size:clamp(1.8rem,2.5vw,2.65rem); margin-top:.85rem; }
+.home-v18 .actions { margin-top:1.35rem; }
+.home-capabilities { align-self:stretch; display:grid; align-content:center; gap:.75rem; }
+.home-representative { margin-block:.8rem; }
+.home-representative:first-of-type { border-top:1px solid var(--line); }
+.home-v18 .hero + .home-representative { border-top:1px solid var(--line); padding-top:.8rem; margin-top:0; }
+.home-v18 .section-heading { margin-bottom:.65rem; }
+.home-v18 .section-heading .text-link { margin-right:0; }
+.home-representative .grid { gap:.5rem .65rem; }
+.home-v18 .home-representative :is(.project-card, .locked-project) {
+  min-height:6.5rem;
+  padding:.75rem 1rem;
+}
+.locked-project { display:grid; align-content:center; gap:.55rem; }
+.locked-project span { height:.42rem; border-radius:1rem; background:#435776; opacity:.58; filter:blur(2px); width:34%; }
+.locked-project span + span { width:51%; }
+.home-access-notice { display:flex; align-items:center; flex-wrap:wrap; gap:.5rem 1rem; padding:.6rem 1rem; border:1px solid var(--line); }
+.home-access-notice p { flex:1 1 15rem; font-size:.9rem; }
+.home-access-notice h2 { font-size:1rem; }
+@media(max-width:639px) {
+  .home-v18 .hero { grid-template-columns:minmax(0,1fr); gap:1rem; }
+  .home-v18 .actions .button { width:auto; }
+  .home-access-notice .button { width:100%; }
+  .home-v18 .home-representative :is(.project-card, .locked-project) { min-height:6rem; }
+}
