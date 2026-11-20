@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useStoredState } from "../use-stored-state";
+import { useStoredState } from "../shared/use-stored-state";
 import { createTodo, filterTodos, updateTodo } from "./todo";
 
 type Todo = { id: string; text: string; done: boolean };
@@ -32,7 +32,14 @@ export function TodoList() {
 
   const visible: Todo[] = filterTodos(items, filter);
 
-  return <div className="panel concept-card demo-panel">
+  const completed = items.filter((item) => item.done).length;
+
+  return <div className="panel concept-card demo-panel todo-demo">
+    <div className="todo-heading">
+      <h2>할 일 목록</h2>
+      <p className="muted" role="status">{ready ? `전체 ${items.length}개 · 완료 ${completed}개` : "목록 불러오는 중"}</p>
+      <progress aria-label="할 일 완료 진행률" value={completed} max={Math.max(items.length, 1)} />
+    </div>
     <form className="demo-form" onSubmit={save}>
       <label htmlFor="todo-text">{editing ? "할 일 수정" : "새 할 일"}</label>
       <div className="demo-actions">
@@ -41,12 +48,11 @@ export function TodoList() {
         {editing && <button type="button" className="button" onClick={resetEditor}>취소</button>}
       </div>
     </form>
-    <div className="demo-actions" aria-label="할 일 상태 필터">
+    <div className="demo-actions todo-filters" role="group" aria-label="할 일 상태 필터">
       {(Object.keys(filters) as (keyof typeof filters)[]).map((key) =>
         <button key={key} className="button" aria-pressed={filter === key} onClick={() => setFilter(key)}>{filters[key]}</button>)}
     </div>
-    <p className="muted" role="status">{ready ? `전체 ${items.length}개 · 완료 ${items.filter((item) => item.done).length}개` : "목록 불러오는 중"}</p>
-    {ready && !visible.length && <p className="muted">표시할 할 일이 없습니다.</p>}
+    {ready && !visible.length && <p className="muted todo-empty">표시할 할 일이 없습니다.</p>}
     <ul className="todo-list">
       {visible.map((item) => <li key={item.id}>
         <label><input type="checkbox" checked={item.done} onChange={(event) => {

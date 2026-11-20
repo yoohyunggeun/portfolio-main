@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  ["/", "Home"], ["/experience", "Experience"],
-  ["/lab", "개인 프로젝트"], ["/skills", "Skills"],
+  ["/", "Home"], ["/experience", "Experience"], ["/work", "실무 프로젝트"],
+  ["/lab", "개인 프로젝트"], ["/skills", "Skills"], ["/learning", "Learning"], ["/build-log", "제작 과정"],
 ];
 
 function NavigationLinks() {

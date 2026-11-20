@@ -3,10 +3,12 @@ import Link from "next/link";
 export const metadata = { title: "Contact" };
 
 const sections = [
-  ["/", "Home", "핵심 소개와 경력 요약"],
+  ["/", "Home", "핵심 소개와 대표 프로젝트"],
   ["/experience", "Experience", "경력과 기술 성장 과정"],
-  ["/lab", "개인 프로젝트", "분야별 목록과 데모"],
+  ["/work", "실무 프로젝트", "대표·전체·기타 수행 경험"],
+  ["/lab", "개인 프로젝트", "분야별 목록과 실행 예제"],
   ["/skills", "Skills", "기술별 경험과 근거"],
+  ["/learning", "Learning", "교육과 구현 기록"],
 ];
 
 export default function Contact() {

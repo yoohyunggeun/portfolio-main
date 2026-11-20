@@ -1,4 +1,6 @@
 import { todolist } from "./todolist";
 import { shellgame } from "./shellgame";
 
-export const personalProjects = [todolist, shellgame];
+import { frontendExamples } from "./frontend-examples";
+
+export const personalProjects = [todolist, shellgame, ...frontendExamples];
