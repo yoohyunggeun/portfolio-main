@@ -37,7 +37,10 @@ export async function apiResponse(path: string, options: {
   if ((requiresAccess || accessId || accessSecret) && (!accessId || !accessSecret)) {
     throw new AccessError(503);
   }
-  const headers = new Headers({ Authorization: `Bearer ${serviceToken}` });
+  const headers = new Headers({
+    Authorization: `Bearer ${serviceToken}`,
+    "User-Agent": "Geunyfolio-Frontend/1.0 (+https://geuny.vercel.app)",
+  });
   if (accessId && accessSecret) {
     headers.set("CF-Access-Client-Id", accessId);
     headers.set("CF-Access-Client-Secret", accessSecret);
