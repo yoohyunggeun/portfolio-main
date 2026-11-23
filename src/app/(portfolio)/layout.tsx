@@ -16,6 +16,7 @@ export default function PortfolioLayout({ children }: { children: React.ReactNod
       <span>SOFTWARE ENGINEER / JAVA · WEB · SYSTEMS</span>
       <nav aria-label="하단 메뉴">
         <Link href="/contact">Contact</Link>
+        <Link href="/privacy">개인정보 안내</Link>
         <a href="https://github.com/yoohyunggeun">GitHub</a>
         {(process.env.PORTFOLIO_ACCESS_URL || process.env.NODE_ENV === "development") && <Link href="/admin/login">관리자 로그인</Link>}
       </nav>

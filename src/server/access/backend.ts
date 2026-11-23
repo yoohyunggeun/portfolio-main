@@ -83,7 +83,7 @@ export async function authorize(slug: string) {
 }
 
 export type RequestRow = { id: string; company: string; email: string; status: "pending" | "approved" | "rejected"; created_at: string };
-export type RecipientRow = { id: string; company: string; email: string | null; application: string | null; contact: string | null; posting_url: string | null; memo: string | null; status: string };
+export type RecipientRow = { id: string; company: string; email: string | null; application: string | null; contact: string | null; posting_url: string | null; memo: string | null; status: string; purposeEndedAt?: string | null; historyComplete?: boolean; canEndPurpose?: boolean; purposeEndBlockedReason?: "active_permissions" | "history_unknown" | "no_permission_end" | null };
 export type InvitationRow = { id: string; recipient_id: string; request_id: string | null; expires_at: string; created_at: string; max_redemptions: number | null; status: string };
 export type SessionRow = { id: string; invitation_id: string; started_at: string; last_seen_at: string; expires_at: string; status: string };
 

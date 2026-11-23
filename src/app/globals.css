@@ -509,3 +509,26 @@ h2 { font-size: 1.2rem; font-weight: 700; }
   .concept-grid.two { grid-template-columns: minmax(0, 1fr); }
   .work-search { flex-basis: 100%; }
 }
+
+.privacy-page { max-width: 60rem; margin-inline: auto; display: grid; gap: 1.25rem; }
+.privacy-page .concept-card { min-width: 0; }
+.privacy-page h2 { font-size: 1.2rem; }
+.privacy-page p, .privacy-page dd { overflow-wrap: anywhere; line-height: 1.75; }
+.privacy-status { border: 1px solid var(--accent); }
+.privacy-toc { display: flex; flex-wrap: wrap; gap: .6rem 1rem; }
+.privacy-toc a { color: var(--accent); padding-block: .35rem; }
+.privacy-page section { scroll-margin-top: 2rem; }
+.privacy-list { margin: 0; }
+.privacy-list > div { padding-block: .8rem; border-bottom: 1px solid var(--line); }
+.privacy-list > div:last-child { border-bottom: 0; }
+.privacy-list dt { font-weight: 700; }
+.privacy-list dd { margin: .4rem 0 0; color: var(--muted); }
+.privacy-request-notice { padding: .85rem; border: 1px solid var(--line); border-radius: .65rem; font-size: .875rem; }
+.privacy-request-notice p { line-height: 1.7; margin-top: 0; }
+.privacy-request-notice a { display: inline-block; padding-block: .35rem; }
+@media (min-width: 640px) {
+  .retention-list > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 1rem; }
+  .retention-list dd { margin: 0; }
+}
+.privacy-consent { display: flex; align-items: flex-start; gap: .65rem; line-height: 1.7; }
+.privacy-consent input[type="checkbox"] { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; margin-top: .25rem; accent-color: var(--accent); }

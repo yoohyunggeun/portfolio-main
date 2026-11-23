@@ -21,7 +21,7 @@ export function ActionForm() {
 
   return <div className="panel concept-card demo-panel frontend-example">
     <h2>주제 제안 폼</h2>
-    <p className="muted">예시 주제를 넣어 서버 검증과 재시도를 테스트하세요.</p>
+    <p className="muted">예시 주제를 넣어 서버 검증과 재시도를 테스트하세요. 입력은 서버로 전송됩니다. 실제 개인정보는 입력하지 마세요.</p>
     <form action={formAction} className="demo-form action-demo-form">
       <label htmlFor="action-demo-topic">주제</label>
       <div className="demo-actions">

@@ -22,6 +22,7 @@ export function BoundaryControls() {
     </section>
     <section className="example-surface">
       <h2><code>"use server"</code></h2>
+      <p className="muted">입력은 서버로 전송해 검증합니다. 실제 개인정보는 입력하지 마세요.</p>
       <form action={submit} className="demo-form action-demo-form">
         <label htmlFor="boundary-note">검증할 메모</label>
         <div className="demo-actions">

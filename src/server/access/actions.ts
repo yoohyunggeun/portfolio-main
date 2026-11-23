@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { privacyVersion } from "@/content/privacy";
 import { AccessError, api, apiId, invitationToken, setBackendCookie, springAccess, type Issued } from "./backend";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -10,6 +11,7 @@ export type RequestState = { error?: string; email?: string; invite?: string; pr
 
 export async function submitRequest(_: RequestState, form: FormData): Promise<RequestState> {
   if (!springAccess() && !await isLocalPreview()) return { error: "로컬 미리보기에서만 요청할 수 있습니다." };
+  if (form.get("privacyConsent") !== "on" || form.get("privacyVersion") !== privacyVersion) return { error: "개인정보 수집·이용 안내를 확인하고 동의해 주세요." };
   const company = String(form.get("company") ?? "").trim();
   const email = String(form.get("email") ?? "").trim();
   if (!company || company.length > 100 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -17,7 +19,7 @@ export async function submitRequest(_: RequestState, form: FormData): Promise<Re
   }
   try {
     if (springAccess()) {
-      await api("access-requests", { method: "POST", body: { company, email }, source: "local-frontend" });
+      await api("access-requests", { method: "POST", body: { company, email, consent: { accepted: true, policyVersion: privacyVersion } }, source: "local-frontend" });
       return { email };
     }
     db().prepare("INSERT INTO requests (id, company, email, created) VALUES (?, ?, ?, ?)").run(token(), company, email, now());

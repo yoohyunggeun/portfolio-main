@@ -1,3 +1,4 @@
+import { RecipientPurposeEnd } from "@/components/access/recipient-purpose-end-form";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AdminNav } from "@/components/access/admin-nav";
@@ -39,6 +40,7 @@ export default async function RecipientPage({ params }: { params: Promise<{ id: 
             <Link className="button primary" href={`/admin/invitations?recipient=${id}`}>+ 초대 링크 생성</Link>
             <RevokeRecipient id={id} />
           </>}
+          {remote && <RecipientPurposeEnd key={id} id={id} canEnd={target?.canEndPurpose === true && target.historyComplete === true && !target.purposeEndBlockedReason} endedAt={target?.purposeEndedAt ?? null} blockedReason={target?.purposeEndBlockedReason ?? "history_unknown"} />}
           <details><summary>대상 정보 수정</summary><RecipientForm remote={!!remote} recipient={{ ...recipient, email: target?.email ?? "" }} /></details>
         </article>
         <section className="panel concept-card access-card">

@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState, useState } from "react";
 import Link from "next/link";
+import { privacyVersion } from "@/content/privacy";
 import { useRouter } from "next/navigation";
 import { FocusHeading } from "./focus-heading";
 import { decideRequest, submitRequest } from "@/server/access/actions";
@@ -25,8 +26,12 @@ export function RequestForm({ title }: { title: string }) {
     <Link className="text-link" href="/">← 홈으로</Link><h1>상세 자료 열람 요청</h1>
     <p className="muted">승인되면 초대 링크로 전체 보호 자료를 열람할 수 있습니다.</p>
 
+    <aside className="privacy-request-notice" aria-label="개인정보 처리 안내"><p>회사명·이메일은 열람 요청 검토와 승인 링크 안내에 사용합니다. 대기 요청은 접수 후 30일, 거절 요청은 결정 후 30일, 승인 대상 정보는 제공 목적 종료와 최종 권한 종료가 모두 확인된 뒤 30일을 보관 기준으로 정했습니다. 기한이 지난 기록은 정기 정리 시 활성 권한과 종료 근거를 확인해 처리합니다.</p><Link className="text-link" href="/privacy">개인정보 안내 · 보관 기준과 문의 →</Link></aside>
     <label>회사명<input name="company" value={company} onChange={(event) => setCompany(event.target.value)} required maxLength={100} /></label>
     <label>수신 이메일<input name="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required maxLength={254} /></label>
+    <input type="hidden" name="privacyVersion" value={privacyVersion} />
+    <p id="privacy-refusal" className="muted">동의를 거부할 수 있습니다. 동의하지 않으면 열람 요청을 접수할 수 없습니다. 일반 공개 페이지는 동의 없이 볼 수 있습니다.</p>
+    <label className="privacy-consent"><input name="privacyConsent" type="checkbox" required aria-describedby="privacy-refusal" /> 개인정보 수집·이용에 동의합니다 (필수)</label>
     {!pending && state.error && <p className="access-result" role="alert">{state.error}</p>}
     <button className="button primary" disabled={pending}>{pending ? "요청 제출 중…" : state.error ? "다시 시도" : "열람 요청 제출"}</button>
     <p className="muted">승인 후 관리자가 열람 링크를 안내합니다.</p>
