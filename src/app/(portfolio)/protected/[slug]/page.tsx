@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { ReaderEndForm } from "@/components/access/reader-end-form";
+import { endReading } from "@/server/access/reader-end";
 import { notFound, redirect } from "next/navigation";
 import { resource, sessionExpiry } from "@/server/access/local";
 import { AccessError, authorize, springAccess } from "@/server/access/backend";
@@ -35,6 +37,7 @@ export default async function ProtectedCase({ params }: { params: Promise<{ slug
         <h2>{title}</h2><p className="muted">{body}</p>
       </section>)}
     </div>
+    {!admin && <ReaderEndForm endAction={endReading} />}
     <p className="lede">열람 시간이 끝나면 접근 안내에서 다시 요청할 수 있습니다.</p>
     {content.hasAttachment && <p><a className="button" href={`/protected/${slug}/attachment`}>보호 첨부 다운로드</a></p>}
     <Link className="text-link" href="/work/mes-label">← 공개 프로젝트 소개</Link>
