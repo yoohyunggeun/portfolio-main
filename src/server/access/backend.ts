@@ -18,8 +18,9 @@ export class AccessError extends Error {
 
 export async function apiResponse(path: string, options: {
   method?: string; body?: unknown; key?: string; source?: string;
+  includeSessions?: boolean; signal?: AbortSignal;
 } = {}): Promise<Response> {
-  const jar = await cookies();
+  const jar = options.includeSessions === false ? undefined : await cookies();
   let url: URL;
   try {
     url = new URL(process.env.PORTFOLIO_ACCESS_URL ?? "");
@@ -46,7 +47,7 @@ export async function apiResponse(path: string, options: {
     headers.set("CF-Access-Client-Secret", accessSecret);
   }
   for (const role of ["admin", "reader"] as const) {
-    const value = jar.get(backendCookie(role))?.value;
+    const value = jar?.get(backendCookie(role))?.value;
     if (value) headers.set(`X-${role}-Session`, value);
   }
   if (options.body !== undefined) headers.set("Content-Type", "application/json");
@@ -57,7 +58,7 @@ export async function apiResponse(path: string, options: {
     result = await fetch(new URL("/v1/" + path, url), {
       method: options.method, headers, cache: "no-store", redirect: "error",
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
-      signal: AbortSignal.timeout(5000),
+      signal: options.signal ?? AbortSignal.timeout(5000),
     });
   } catch {
     throw new AccessError(503);
