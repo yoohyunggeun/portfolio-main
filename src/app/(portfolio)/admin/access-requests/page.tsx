@@ -3,6 +3,7 @@ import { AdminNav } from "@/components/access/admin-nav";
 import { redirect } from "next/navigation";
 import { FocusHeading } from "@/components/access/focus-heading";
 import { DecisionForm, InviteLink } from "@/components/access/forms";
+import { RecipientForm } from "@/components/access/recipient-form";
 import { db, resource, sessionExpiry } from "@/server/access/local";
 type Row = {
   id: string;
@@ -15,6 +16,7 @@ type Row = {
   invite_until: number | null;
   cancelled: number | null;
   reusable: number;
+  approvedRecipientId?: string | null;
 };
 const labels = {
   pending: "검토 대기",
@@ -69,7 +71,15 @@ export default async function Requests({
         x.toLocaleLowerCase().includes(term.toLocaleLowerCase()),
       ),
   );
-  const selected = shown.find((row) => row.id === query.request);
+  const selected = rows.find((row) => row.id === query.request);
+  const approvedTarget =
+    remote && selected?.status === "approved" && selected.approvedRecipientId
+      ? (
+          await list<import("@/server/access/backend").RecipientRow>(
+            "recipients",
+          )
+        ).find((row) => row.id === selected.approvedRecipientId)
+      : undefined;
   function href(nextStatus = status, id = "") {
     const p = new URLSearchParams({ status: nextStatus });
     if (term) p.set("q", term);
@@ -198,12 +208,63 @@ export default async function Requests({
         </div>
         {selected ? (
           <article
-            key={selected.id + selected.status}
+            key={selected.id}
             className="panel concept-card request-detail access-transition"
           >
             <p className="eyebrow">{labels[selected.status]}</p>
             <h2>{selected.company}</h2>
             <p className="muted">{selected.email}</p>
+            {selected.status === "approved" && (
+              <section className="access-card approved-recipient-management">
+                <h3>승인 대상 정보와 권한 관리</h3>
+                <p className="muted">
+                  위 회사명·이메일은 원접수 기록입니다. 아래 수정은 연결된 대상
+                  정보에만 적용하며 원접수·동의 증적은 덮어쓰지 않습니다.
+                </p>
+                {approvedTarget ? (
+                  <>
+                    <Link
+                      className="button"
+                      href={`/admin/recipients/${approvedTarget.id}`}
+                    >
+                      승인 대상 상세 →
+                    </Link>
+                    <Link
+                      className="text-link"
+                      href={`/admin/invitations?recipient=${approvedTarget.id}`}
+                    >
+                      이 대상의 링크 생성·관리 →
+                    </Link>
+                    <Link
+                      className="text-link"
+                      href={`/admin/sessions?recipient=${approvedTarget.id}`}
+                    >
+                      이 대상의 기기별 세션 관리 →
+                    </Link>
+                    <details>
+                      <summary>승인 대상 정보 수정</summary>
+                      <RecipientForm
+                        remote
+                        recipient={{
+                          id: approvedTarget.id,
+                          company: approvedTarget.company,
+                          email: approvedTarget.email ?? "",
+                          application: approvedTarget.application ?? "",
+                          contact: approvedTarget.contact ?? "",
+                          posting: approvedTarget.posting_url ?? "",
+                          memo: approvedTarget.memo ?? "",
+                        }}
+                      />
+                    </details>
+                  </>
+                ) : (
+                  <p>
+                    이 요청과 대상의 정확한 연결이 확인되지 않아 여기서 수정할
+                    수 없습니다. 회사명·이메일로 임의 연결하지 않습니다.
+                  </p>
+                )}
+              </section>
+            )}
             <dl>
               <dt>요청 범위</dt>
               <dd>{remote ? "전체 보호 자료 열람" : resource.title}</dd>
@@ -218,9 +279,13 @@ export default async function Requests({
             {selected.status === "pending" && (
               <>
                 <p className="muted">최초 열람 · 시작 후 1시간</p>
-                <DecisionForm id={selected.id} />
               </>
             )}
+            <DecisionForm
+              key={selected.id}
+              id={selected.id}
+              status={selected.status}
+            />
             {selected.status === "approved" &&
               selected.invite &&
               (selected.cancelled ||
