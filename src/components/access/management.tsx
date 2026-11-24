@@ -1,7 +1,7 @@
 "use client";
 
 import { InviteLink } from "./forms";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { manageAccess } from "@/server/access/management";
 
 export function ManageForm({
@@ -19,6 +19,11 @@ export function ManageForm({
 }) {
   const [message, action, pending] = useActionState(manageAccess, "");
   const submitted = useRef(false);
+  const [issueContext, setIssueContext] = useState<{
+    target: string;
+    policy: string;
+    duration: string;
+  } | null>(null);
   const result = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!pending) submitted.current = false;
@@ -28,8 +33,26 @@ export function ManageForm({
     <form
       action={action}
       onSubmit={(event) => {
-        if (submitted.current) event.preventDefault();
-        else submitted.current = true;
+        if (submitted.current) {
+          event.preventDefault();
+          return;
+        }
+        submitted.current = true;
+        if (operation === "issue") {
+          const form = event.currentTarget;
+          const data = new FormData(form);
+          const selected = (name: string) =>
+            form
+              .querySelector<HTMLSelectElement>(`select[name="${name}"]`)
+              ?.selectedOptions[0]?.textContent?.trim() ?? "확인 필요";
+          setIssueContext({
+            target: selected("recipient"),
+            policy: selected("policy"),
+            duration: data.has("days")
+              ? `${data.get("days")}일`
+              : `${data.get("expiry")} (한국 시간)`,
+          });
+        }
       }}
       className="access-card"
       aria-busy={pending}
@@ -65,6 +88,16 @@ export function ManageForm({
           {message.startsWith("/invite/") ? (
             <>
               <p role="status">초대 링크를 생성했습니다.</p>
+              {issueContext && (
+                <dl className="issued-context">
+                  <dt>발급 대상</dt>
+                  <dd>{issueContext.target}</dd>
+                  <dt>재사용 정책</dt>
+                  <dd>{issueContext.policy}</dd>
+                  <dt>유효 기간</dt>
+                  <dd>{issueContext.duration}</dd>
+                </dl>
+              )}
               <InviteLink path={message} />
             </>
           ) : (
