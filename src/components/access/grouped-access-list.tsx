@@ -11,10 +11,12 @@ export function GroupedAccessList({
   rows,
   state,
   href,
+  openGroupId,
 }: {
   rows: GroupedAccessRow[];
   state: string;
   href: (state: string) => string;
+  openGroupId?: string;
 }) {
   const selected = ["inactive", "all"].includes(state) ? state : "active";
   const groups = new Map<string, GroupedAccessRow[]>();
@@ -56,6 +58,7 @@ export function GroupedAccessList({
       {visible.map(([id, items]) => (
         <details
           key={id}
+          open={openGroupId === id}
           className="panel concept-card access-card recipient-access-group"
         >
           <summary>

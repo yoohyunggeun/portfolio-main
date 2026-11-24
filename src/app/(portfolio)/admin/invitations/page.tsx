@@ -1,4 +1,5 @@
 import { ManagementNotice } from "@/components/access/management-notice";
+import { InvitationSessions } from "@/components/access/invitation-sessions";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminNav } from "@/components/access/admin-nav";
@@ -23,10 +24,16 @@ export default async function Invitations({
     recipient?: string;
     state?: string;
     result?: string;
+    invitation?: string;
   }>;
 }) {
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
-  const { recipient, state = "active", result } = await searchParams;
+  const {
+    recipient,
+    state = "active",
+    result,
+    invitation,
+  } = await searchParams;
   const { springAccess } = await import("@/server/access/backend");
   const remote = springAccess()
     ? await (await import("@/server/access/views")).accessLists()
@@ -73,10 +80,19 @@ export default async function Invitations({
           <ManagementNotice kind={result} />
         )}
         <GroupedAccessList
+          openGroupId={
+            invitation
+              ? rows.find((row) => row.id === invitation)?.recipient_id
+              : undefined
+          }
           state={state}
           href={href}
           rows={rows.map((row) => {
             const validClock = Number.isFinite(row.invite_until);
+            const linkedSessions =
+              remote?.readers.filter(
+                (session) => session.invitation_id === row.id,
+              ) ?? [];
             const status = row.cancelled
               ? "취소됨"
               : row.used && !row.reusable
@@ -152,14 +168,24 @@ export default async function Invitations({
                       label="링크 취소"
                     />
                   )}
+                  {remote && (
+                    <InvitationSessions
+                      invitationId={row.id}
+                      recipientId={row.recipient_id}
+                      rows={linkedSessions}
+                      at={now()}
+                    />
+                  )}
                   {remote &&
                     validClock &&
-                    (row.cancelled || row.invite_until <= now()) && (
+                    (row.cancelled || row.invite_until <= now()) &&
+                    linkedSessions.length === 0 && (
                       <details>
                         <summary>이 링크 영구 삭제</summary>
                         <p className="muted">
-                          숨김이 아닌 물리 삭제입니다. 연결된 세션 기록이 남아
-                          있으면 먼저 해당 종료 세션을 개별 삭제해야 합니다.
+                          연결된 세션은 0개입니다. 이 링크 기록만 물리
+                          삭제합니다. 기존 요청과의 연결을 확인할 수 없는 기록은
+                          서버 검사에서 삭제가 차단될 수 있습니다.
                         </p>
                         <ManageForm
                           operation="delete-invite"

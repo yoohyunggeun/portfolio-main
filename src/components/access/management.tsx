@@ -10,12 +10,14 @@ export function ManageForm({
   children,
   label,
   returnRecipient,
+  returnInvitation,
 }: {
   operation: string;
   id?: string;
   children?: React.ReactNode;
   label: string;
   returnRecipient?: string;
+  returnInvitation?: string;
 }) {
   const [message, action, pending] = useActionState(manageAccess, "");
   const submitted = useRef(false);
@@ -61,6 +63,9 @@ export function ManageForm({
       {id && <input type="hidden" name="id" value={id} />}
       {returnRecipient && (
         <input type="hidden" name="returnRecipient" value={returnRecipient} />
+      )}
+      {returnInvitation && (
+        <input type="hidden" name="returnInvitation" value={returnInvitation} />
       )}
       {children}
       <button

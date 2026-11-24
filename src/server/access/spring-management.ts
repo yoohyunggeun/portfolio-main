@@ -85,19 +85,33 @@ export async function manageSpring(form: FormData) {
       error instanceof AccessError &&
       error.status === 409 &&
       ["delete-invite", "delete-session"].includes(String(operation))
-    )
-      return "상태가 바뀌었거나 연결된 기록이 남아 삭제할 수 없습니다. 활성 항목은 먼저 종료·취소하고, 링크는 연결된 종료 세션을 개별 삭제한 뒤 다시 확인해 주세요.";
+    ) {
+      revalidatePath("/admin", "layout");
+      return operation === "delete-invite"
+        ? "링크 상태나 연결 기록이 바뀌어 삭제하지 않았습니다. 갱신된 카드의 연결 세션을 확인하고, 활성 세션 종료 → 종료 세션 개별 삭제 → 링크 삭제 순서로 진행해 주세요. 연결 세션이 0개여도 요청 관계가 확인되지 않으면 삭제가 차단됩니다."
+        : "세션 상태가 바뀌어 삭제하지 않았습니다. 갱신된 상태를 확인하고 활성 세션은 먼저 명시적으로 종료해 주세요.";
+    }
     return "저장하지 못했습니다. 현재 상태를 확인해 주세요.";
   }
   revalidatePath("/admin", "layout");
   const returnRecipient = String(form.get("returnRecipient") ?? "");
+  const returnInvitation = String(form.get("returnInvitation") ?? "");
   const destination = (collection: string, result: string) =>
-    `/admin/${collection}?` +
+    `/admin/${collection === "sessions" && apiId(returnInvitation) ? "invitations" : collection}?` +
     new URLSearchParams({
-      state: "inactive",
+      state:
+        collection === "sessions" && apiId(returnInvitation)
+          ? "all"
+          : "inactive",
       result,
       ...(apiId(returnRecipient) ? { recipient: returnRecipient } : {}),
-    });
+      ...(collection === "sessions" && apiId(returnInvitation)
+        ? { invitation: returnInvitation }
+        : {}),
+    }) +
+    (collection === "sessions" && apiId(returnInvitation)
+      ? `#invite-${returnInvitation}`
+      : "");
   if (deletedCollection) redirect(destination(deletedCollection, "deleted"));
   if (changedCollection) redirect(destination(changedCollection, "updated"));
   return invite ?? "저장했습니다.";

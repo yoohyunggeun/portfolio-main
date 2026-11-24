@@ -9,6 +9,7 @@ import { formatKst } from "@/server/access/time";
 type Session = {
   id: string;
   recipient_id?: string;
+  invitation_id?: string;
   company: string | null;
   started: number | null;
   recent: number | null;
@@ -22,10 +23,16 @@ export default async function Sessions({
     recipient?: string;
     state?: string;
     result?: string;
+    invitation?: string;
   }>;
 }) {
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
-  const { recipient, state = "active", result } = await searchParams;
+  const {
+    recipient,
+    state = "active",
+    result,
+    invitation,
+  } = await searchParams;
   const { springAccess } = await import("@/server/access/backend");
   const remote = springAccess()
     ? await (await import("@/server/access/views")).accessLists()
@@ -36,21 +43,31 @@ export default async function Sessions({
       : db().prepare("SELECT company FROM recipients WHERE id=?").get(recipient)
     : undefined;
   if (recipient && !target) redirect("/admin/recipients");
-  const rows: Session[] = remote
+  const allRows: Session[] = remote
     ? remote.readers.filter((r) => !recipient || r.recipient_id === recipient)
     : (db()
         .prepare(
-          "SELECT s.id,r.recipient_id,r.company,s.started,s.recent,s.expires,s.ended FROM sessions s LEFT JOIN requests r ON s.request_id=r.id WHERE s.role='reader' AND (? IS NULL OR r.recipient_id=?) ORDER BY s.started DESC,s.rowid DESC",
+          "SELECT s.id,r.id AS invitation_id,r.recipient_id,r.company,s.started,s.recent,s.expires,s.ended FROM sessions s LEFT JOIN requests r ON s.request_id=r.id WHERE s.role='reader' AND (? IS NULL OR r.recipient_id=?) ORDER BY s.started DESC,s.rowid DESC",
         )
         .all(recipient ?? null, recipient ?? null) as unknown as Session[]);
+  const rows = invitation
+    ? allRows.filter((row) => row.invitation_id === invitation)
+    : allRows;
   const href = (s: string) =>
     "/admin/sessions?" +
-    new URLSearchParams({ state: s, ...(recipient ? { recipient } : {}) });
+    new URLSearchParams({
+      state: s,
+      ...(recipient ? { recipient } : {}),
+      ...(invitation ? { invitation } : {}),
+    });
   return (
     <section className="page-section">
       <AdminNav current="sessions" />
       <p className="eyebrow">ADMIN CONSOLE</p>
       <h1>열람 세션 관리</h1>
+      {invitation && (
+        <p className="muted">선택한 링크에 연결된 세션만 표시합니다.</p>
+      )}
       <p className="lede">
         대상별 한 행으로 묶어 보되 기기별 세션과 권한은 각각 유지합니다. 종료는
         다음 보호 요청부터 적용됩니다.
