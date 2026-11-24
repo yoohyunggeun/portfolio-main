@@ -111,20 +111,27 @@ export default function Experience() {
       >
         <h2 id="internship-title">인턴 경험</h2>
         <article className="panel concept-card experience-row">
-          <div>
-            <p className="eyebrow hero-label">2019.05 – 08</p>
+          <div className="experience-meta">
+            <p className="eyebrow hero-label experience-period">2019.05 – 2019.08</p>
             <h3>지엔기술</h3>
             <p className="muted">개발팀 · 인턴/수습</p>
           </div>
           <div>
             <h3>사내 업무보고 관리 시스템</h3>
+            <p className="capability-statement">
+              일일 업무의 기록을 주간 보고 흐름까지 연결했습니다.
+            </p>
             <p className="muted">
-              Spring MVC 기반 업무보고 등록·수정·조회 기능을 구현했습니다. JSP
-              화면, jQuery·AJAX 비동기 처리, MyBatis·MySQL 연동과 GitHub 사용을
-              경험했습니다.
+              일일 업무보고 작성·수정·삭제 페이지와 조회수·요일별 보고 내용 조회
+              기능을 개발했습니다. 일일 보고를 주간 업무보고서에서 함께 확인하고,
+              하루 업무의 진행 상황과 추가 작업을 체크하는 흐름을 화면에 반영했습니다.
+            </p>
+            <p className="muted">
+              Java·Spring MVC와 JSP로 업무 화면을 구성하고, jQuery·AJAX 비동기
+              처리와 MyBatis 기반 데이터 연동을 경험했습니다.
             </p>
             <p className="text-link">
-              Java · Spring MVC · JSP · jQuery · AJAX · MyBatis · MySQL · GitHub
+              Java · Spring MVC · JSP · jQuery · AJAX · MyBatis · Altibase · Oracle SQL
             </p>
           </div>
         </article>
@@ -136,10 +143,19 @@ export default function Experience() {
       >
         <h2 id="education-title">교육 이력</h2>
         <article className="panel concept-card experience-row">
-          <p className="eyebrow hero-label">2020.02 – 08</p>
+          <p className="eyebrow hero-label experience-period">2020.02 – 2020.08</p>
           <div>
-            <h3>웹 서비스 구현 교육</h3>
-            <p className="muted">비트컴퓨터IT교육센터</p>
+            <h3>빅데이터를 활용한 지능형 웹 개발자 양성과정</h3>
+            <p className="muted">비트교육센터 · 수료</p>
+            <p className="capability-statement">
+              데이터와 화면을 연결하는 웹 개발의 기본기를 팀 프로젝트로 익혔습니다.
+            </p>
+            <p className="muted">
+              Java·Spring 기반 웹 개발과 JSP·jQuery, SQL·프레임워크 활용을
+              학습했습니다. 팀 프로젝트에서 웹 서비스의 기획과 화면 구성부터
+              개발까지 실습하며, 요구사항을 기능과 데이터 흐름으로 구체화하는
+              과정을 경험했습니다.
+            </p>
           </div>
         </article>
       </section>

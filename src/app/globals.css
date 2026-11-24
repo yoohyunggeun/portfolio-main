@@ -1172,6 +1172,9 @@ h2 {
 .log-notes {
   grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
 }
+.log-principles {
+  margin-top: 1.5rem;
+}
 .log-table {
   overflow-x: auto;
 }
@@ -2111,12 +2114,37 @@ button:disabled {
   grid-template-columns: minmax(12rem, 1fr) minmax(0, 2.5fr);
   gap: 2rem;
 }
+.experience-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+.experience-period {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  align-self: start;
+  inline-size: max-content;
+  min-inline-size: 10.5rem;
+  max-inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: 0.625rem 1rem;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
 .experience-row h3,
 .skill-card h2 {
   font-size: 1.3rem;
 }
 .experience-row p + p {
   margin-top: 0.6rem;
+}
+.experience-row :is(h3, p) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 .skills-grid {
   margin-top: 2.5rem;

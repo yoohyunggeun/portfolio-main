@@ -51,7 +51,7 @@ export default function BuildLog() {
           </p>
         </article>
       </section>
-      <aside className="panel concept-card">
+      <aside className="panel concept-card log-principles">
         <h2>기록 원칙</h2>
         <p className="muted">
           최신 요약과 과거 본문을 구분합니다. 정정은 날짜·이유와 함께 새
