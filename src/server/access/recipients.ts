@@ -6,7 +6,7 @@ import { db, now, sessionExpiry, token, validToken } from "./local";
 
 export async function manageRecipient(_: string, form: FormData): Promise<string> {
   if (!await sessionExpiry("admin")) return "관리자 세션이 만료되었습니다.";
-  const { api, apiId, springAccess } = await import("./backend");
+  const { api, apiId, springAccess, AccessError } = await import("./backend");
   const operation = form.get("operation");
   if (springAccess()) {
     const id = String(form.get("id") ?? "");
@@ -25,7 +25,8 @@ export async function manageRecipient(_: string, form: FormData): Promise<string
         await api(`admin/recipients/${id}`, { method: "PATCH", body: {
           company, email, application, contact, postingUrl, memo,
         } });
-      } catch {
+      } catch (error) {
+        if(error instanceof AccessError && error.code === "recipient_duplicate" && error.existingRecipientId) return "duplicate:"+error.existingRecipientId;
         return "대상 정보를 저장하지 못했습니다. 입력값과 관리자 세션을 확인해 주세요.";
       }
       revalidatePath("/admin", "layout");
@@ -37,8 +38,12 @@ export async function manageRecipient(_: string, form: FormData): Promise<string
       result = await api("admin/recipients", { method: "POST", body: {
         company: String(form.get("company") ?? "").trim(),
         email: String(form.get("email") ?? "").trim(),
+        application: String(form.get("application") ?? "").trim(),
       } });
-    } catch { return "회사명과 이메일을 확인해 주세요."; }
+    } catch (error) {
+      if(error instanceof AccessError && error.code === "recipient_duplicate" && error.existingRecipientId) return "duplicate:"+error.existingRecipientId;
+      return "회사명과 이메일을 확인해 주세요.";
+    }
     revalidatePath("/admin", "layout");
     redirect("/admin/recipients/" + result.id);
   }

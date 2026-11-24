@@ -28,14 +28,6 @@ export default async function AccessSettings() {
         <Link className="text-link" href={`/protected/${resource.slug}`} prefetch={false}>{resource.title} →</Link>
       </section>
     </div>
-    <section className="panel concept-card secondary-panel dashboard-recent access-card">
-      <h2>접근 관리</h2>
-      <p className="muted">보호 자료는 직접 발급하거나 열람 요청 승인으로 발급한 초대 링크에서 열 수 있습니다. 이미 시작한 열람은 세션 관리에서 연장하거나 종료합니다.</p>
-      <div className="demo-actions">
-        <Link className="button primary" href="/admin/access-requests">열람 요청 관리</Link>
-        <Link className="button" href="/admin/invitations">초대 링크 관리</Link>
-        <Link className="button" href="/admin/sessions">열람 세션 관리</Link>
-      </div>
-    </section>
+
   </section>;
 }

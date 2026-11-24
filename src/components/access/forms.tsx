@@ -163,14 +163,19 @@ export function DecisionForm({
       aria-busy={pending}
     >
       <input type="hidden" name="id" value={id} />
+      {state.existingRecipientId && <div className="access-card">
+        <Link className="text-link" href={`/admin/recipients/${state.existingRecipientId}`} target="_blank" rel="noopener noreferrer">기존 대상 정보 확인 · {state.existingRecipientId.slice(0,8)} →</Link>
+        <input type="hidden" name="recipientId" value={state.existingRecipientId} />
+        <label><input type="checkbox" required name="confirmReuse" /> 기존 대상에 연결된 다른 지원 건과 권한을 확인했으며, 이 요청을 해당 대상으로 승인합니다.</label>
+      </div>}
       <div className="demo-actions">
         <button
           className="button primary"
           name="decision"
           value="approved"
-          disabled={pending || Boolean(state.error)}
+          disabled={pending || Boolean(state.error && !state.existingRecipientId)}
         >
-          승인 및 링크 발급
+          {state.existingRecipientId ? "확인한 기존 대상으로 승인·발급" : "승인 및 링크 발급"}
         </button>
         <button
           className="button"

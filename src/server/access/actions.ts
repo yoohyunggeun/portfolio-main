@@ -28,6 +28,7 @@ export type RequestState = {
   email?: string;
   invite?: string;
   processed?: boolean;
+  existingRecipientId?: string;
 };
 
 export async function submitRequest(
@@ -120,6 +121,7 @@ export async function decideRequest(
     return { error: "관리자 세션이 만료되었습니다. 다시 시작해 주세요." };
   const id = String(form.get("id") ?? "");
   const decision = form.get("decision");
+  if(form.get("recipientId") && form.get("confirmReuse") !== "on") return {error:"기존 대상 재사용을 명시적으로 확인해 주세요."};
   if (
     !(springAccess() ? apiId(id) : validToken(id)) ||
     (decision !== "approved" && decision !== "rejected")
@@ -131,7 +133,7 @@ export async function decideRequest(
       const result = await api<Issued>(`admin/access-requests/${id}/decision`, {
         method: "POST",
         key: randomUUID(),
-        body: { decision: approve ? "approve" : "reject" },
+        body: { decision: approve ? "approve" : "reject", ...(approve && apiId(String(form.get("recipientId") ?? "")) ? {recipientId: String(form.get("recipientId"))} : {}) },
       });
       revalidatePath("/admin", "layout");
       return {
@@ -151,7 +153,9 @@ export async function decideRequest(
       );
     if (!result.changes)
       return { error: "이미 처리된 요청입니다. 목록을 새로고침해 주세요." };
-  } catch {
+  } catch (error) {
+    if (error instanceof AccessError && error.code === "recipient_duplicate" && error.existingRecipientId)
+      return {error:"동일한 회사·이메일·지원 건의 대상이 있습니다. 정확한 대상을 확인한 뒤 이 요청을 해당 대상으로 승인해 주세요.",existingRecipientId:error.existingRecipientId};
     return { error: "처리 결과를 확인할 수 없습니다. 다시 시도해 주세요." };
   }
   revalidatePath("/admin/access-requests");

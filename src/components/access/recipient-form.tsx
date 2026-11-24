@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { manageRecipient } from "@/server/access/recipients";
 
 type Recipient = { id: string; email?: string; company: string; application: string; contact: string; posting: string; memo: string };
@@ -12,14 +13,15 @@ export function RecipientForm({ recipient, remote }: { recipient?: Recipient; re
     {recipient && <input type="hidden" name="id" value={recipient.id} />}
     <label>회사명<input name="company" defaultValue={recipient?.company} required maxLength={100} /></label>
     {remote && <label>수신 이메일<input name="email" type="email" defaultValue={recipient?.email} required={!recipient} maxLength={254} /></label>}
-    {(!remote || recipient) && <>
     <label>지원 건<input name="application" defaultValue={recipient?.application} required={!remote} maxLength={120} /></label>
+    <p className="muted">회사·수신 이메일·지원 건이 같으면 기존 대상을 재사용합니다. 다른 지원 건은 실제 이름으로 구분하세요.</p>
+    {(!remote || recipient) && <>
     <label>담당자<input name="contact" defaultValue={recipient?.contact} maxLength={120} /></label>
     <label>지원 공고 URL<input name="posting" type="url" defaultValue={recipient?.posting} maxLength={500} /></label>
     <label>메모<textarea name="memo" defaultValue={recipient?.memo} maxLength={1000} /></label>
     </>}
     <button className="button primary" disabled={pending}>{pending ? "저장 중…" : recipient ? "대상 정보 저장" : "대상 등록"}</button>
-    {message && <p role="status">{message}</p>}
+    {message.startsWith("duplicate:") ? <p role="alert">동일한 회사·이메일·지원 건의 대상이 이미 있습니다. <Link href={`/admin/recipients/${message.slice(10)}`} className="text-link">기존 대상 확인 →</Link></p> : message && <p role="status">{message}</p>}
   </form>;
 }
 

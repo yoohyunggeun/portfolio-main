@@ -1,9 +1,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CompanyGroups } from "./company-groups";
 export type GroupedAccessRow = {
   id: string;
   recipientId?: string;
   company: string;
+  email?: string | null;
+  application?: string | null;
+  created?: number;
   active: boolean;
   node: ReactNode;
 };
@@ -18,7 +22,7 @@ export function GroupedAccessList({
   href: (state: string) => string;
   openGroupId?: string;
 }) {
-  const selected = ["inactive", "all"].includes(state) ? state : "active";
+  const selected = ["inactive", "active"].includes(state) ? state : "all";
   const groups = new Map<string, GroupedAccessRow[]>();
   for (const row of rows) {
     const key = row.recipientId ?? `unlinked:${row.id}`;
@@ -31,11 +35,11 @@ export function GroupedAccessList({
   );
   return (
     <div className="access-card">
-      <nav className="concept-tabs" aria-label="관리 항목 상태 필터">
+      <nav className="concept-tabs admin-state-tabs" aria-label="관리 항목 상태 필터">
         {[
+          ["all", "전체"],
           ["active", "활성"],
           ["inactive", "종료·취소·만료"],
-          ["all", "전체"],
         ].map(([s, label]) => (
           <Link
             key={s}
@@ -47,15 +51,16 @@ export function GroupedAccessList({
         ))}
       </nav>
       <p className="muted">
-        대상별 한 행으로 모아 표시합니다. 펼치면 링크·기기별 세션은 각각의
-        기록으로 관리합니다.
+        회사는 표시용으로만 묶습니다. 이메일·지원 건·대상 키를 확인해 선택하세요.
+        같은 회사여도 대상과 기기별 권한을 합치지 않습니다.
       </p>
       {!visible.length && (
         <p className="panel concept-card">
           이 상태에 해당하는 항목이 없습니다.
         </p>
       )}
-      {visible.map(([id, items]) => (
+      <CompanyGroups rows={visible.map(([id,items])=>({id,company:items[0].company,items}))}
+        created={row=>row.items[0].created ?? 0} render={({id,items}) => (
         <details
           key={id}
           open={openGroupId === id}
@@ -63,6 +68,7 @@ export function GroupedAccessList({
         >
           <summary>
             <strong>{items[0].company}</strong>
+            <span>{items[0].email || "이메일 미등록"} · {items[0].application || "지원 건 미등록"}</span>
             <small>
               {items[0].recipientId
                 ? `대상 ${items[0].recipientId.slice(0, 8)}`
@@ -84,7 +90,7 @@ export function GroupedAccessList({
               ))}
           </ul>
         </details>
-      ))}
+      )} />
     </div>
   );
 }

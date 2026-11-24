@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { FocusHeading } from "@/components/access/focus-heading";
 import { DecisionForm, InviteLink } from "@/components/access/forms";
 import { RecipientForm } from "@/components/access/recipient-form";
+import { RecipientLifecycle } from "@/components/access/recipient-lifecycle";
+import { CompanyGroups } from "@/components/access/company-groups";
 import { db, resource, sessionExpiry } from "@/server/access/local";
 type Row = {
   id: string;
@@ -17,6 +19,9 @@ type Row = {
   cancelled: number | null;
   reusable: number;
   approvedRecipientId?: string | null;
+  consent_version?: string | null;
+  consent_received_at?: string | null;
+  approvedRecipientRevokedAt?: string | null;
 };
 const labels = {
   pending: "검토 대기",
@@ -40,11 +45,7 @@ export default async function Requests({
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
   const query = await searchParams,
     status =
-      query.status === "processed"
-        ? "processed"
-        : query.status === "all"
-          ? "all"
-          : "pending",
+      ["pending","approved","rejected","processed"].includes(query.status ?? "") ? query.status! : "all",
     term = (query.q ?? "").trim().slice(0, 100);
   const { list, springAccess, epoch } = await import("@/server/access/backend");
   const remote = springAccess();
@@ -59,26 +60,23 @@ export default async function Requests({
           cancelled: null,
           reusable: 0,
         }))
-        .sort((a, b) => b.created - a.created)
+        .sort((a, b) => b.created - a.created || b.id.localeCompare(a.id))
     : (db()
         .prepare("SELECT * FROM requests ORDER BY created DESC,rowid DESC")
         .all() as unknown as Row[]);
   const shown = rows.filter(
     (row) =>
       (status === "all" ||
-        (row.status === "pending") === (status === "pending")) &&
+        (status === "processed" ? row.status !== "pending" : row.status === status)) &&
       [row.company, row.email].some((x) =>
         x.toLocaleLowerCase().includes(term.toLocaleLowerCase()),
       ),
   );
   const selected = rows.find((row) => row.id === query.request);
+  const recipients = remote ? await list<import("@/server/access/backend").RecipientRow>("recipients") : [];
   const approvedTarget =
     remote && selected?.status === "approved" && selected.approvedRecipientId
-      ? (
-          await list<import("@/server/access/backend").RecipientRow>(
-            "recipients",
-          )
-        ).find((row) => row.id === selected.approvedRecipientId)
+      ? recipients.find((row) => row.id === selected.approvedRecipientId)
       : undefined;
   function href(nextStatus = status, id = "") {
     const p = new URLSearchParams({ status: nextStatus });
@@ -112,9 +110,10 @@ export default async function Requests({
           <div className="request-filters">
             <nav className="concept-tabs" aria-label="요청 상태">
               {[
-                ["pending", "검토 대기"],
-                ["processed", "처리 완료"],
                 ["all", "전체"],
+                ["pending", "검토 대기"],
+                ["approved", "승인 완료"],
+                ["rejected", "거절 완료"],
               ].map(([s, label]) => (
                 <Link
                   key={s}
@@ -153,56 +152,13 @@ export default async function Requests({
             </div>
           ) : (
             <>
-              <div className="panel request-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">회사명</th>
-                      <th scope="col">이메일</th>
-                      <th scope="col">접수일</th>
-                      <th scope="col">상태</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {shown.map((row) => (
-                      <tr key={row.id} data-selected={row.id === selected?.id}>
-                        <th scope="row">
-                          <Link
-                            className="request-select"
-                            aria-current={
-                              row.id === selected?.id ? "true" : undefined
-                            }
-                            href={href(status, row.id)}
-                          >
-                            {row.company}
-                            <span className="sr-only"> 요청 상세 보기</span>
-                          </Link>
-                        </th>
-                        <td>{row.email}</td>
-                        <td>{date(row.created)}</td>
-                        <td>
-                          <span className="log-status">
-                            {labels[row.status]}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <ul className="request-mobile-cards">
-                {shown.map((row) => (
-                  <li className="panel concept-card" key={row.id}>
-                    <h2>{row.company}</h2>
-                    <p className="muted">
-                      {date(row.created)} · {labels[row.status]}
-                    </p>
-                    <Link className="text-link" href={href(status, row.id)}>
-                      요청 상세 보기 →
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <CompanyGroups rows={shown} created={r=>r.created} render={row=><Link className="recipient-choice request-select" href={href(status,row.id)} aria-current={row.id === selected?.id ? "page" : undefined}>
+                <strong>{row.email}</strong><span>{labels[row.status]} · {date(row.created)}</span>
+                <span>{recipients.find(t=>t.id===row.approvedRecipientId)?.application || "지원 건 미등록"}</span>
+                <small>요청 {row.id.slice(0,8)} · 대상 {row.approvedRecipientId?.slice(0,8) ?? "승인 전·연결 미확인"}</small>
+                {row.approvedRecipientRevokedAt && <span>현재 대상 접근 취소됨 · 원승인 이력 보존</span>}
+              </Link>} />
+
             </>
           )}
         </div>
@@ -256,6 +212,8 @@ export default async function Requests({
                         }}
                       />
                     </details>
+                    <p role="status">현재 접근: {approvedTarget.status === "revoked" ? "취소됨" : "허용 대상"} · 원승인 기록은 유지됩니다.</p>
+                    <RecipientLifecycle id={approvedTarget.id} company={approvedTarget.company} mode="revoke" />
                   </>
                 ) : (
                   <p>
@@ -272,8 +230,9 @@ export default async function Requests({
               <dd>{date(selected.created)}</dd>
               <dt>개인정보 동의</dt>
               <dd>
-                현재 요청 폼은 개인정보 수집·이용 동의를 필수 검증합니다. 개별
-                동의 버전·수신 시각은 서버 기록에 보관됩니다.
+                {selected.consent_version && selected.consent_received_at && Number.isFinite(Date.parse(selected.consent_received_at)) ? <>
+                  접수 당시 명시 동의 기록 · 버전 {selected.consent_version}<br />서버 수신 {date(Date.parse(selected.consent_received_at)/1000)} (KST)
+                </> : "접수 당시 동의 증적 미확인 · 현재 폼의 필수 동의와 이 요청의 과거 증적은 구분합니다."}
               </dd>
             </dl>
             {selected.status === "pending" && (
@@ -306,8 +265,8 @@ export default async function Requests({
             </Link>
           </article>
         ) : (
-          <aside className="panel concept-card request-detail empty-detail">
-            <h2>요청을 선택해 주세요</h2>
+          <aside className="request-detail empty-detail">
+            <p>요청을 선택해 주세요</p>
             <p className="muted">
               목록에서 요청을 선택하면 상세 내용과 처리할 수 있는 작업이
               표시됩니다.

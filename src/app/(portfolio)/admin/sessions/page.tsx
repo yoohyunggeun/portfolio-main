@@ -29,7 +29,7 @@ export default async function Sessions({
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
   const {
     recipient,
-    state = "active",
+    state = "all",
     result,
     invitation,
   } = await searchParams;
@@ -85,6 +85,7 @@ export default async function Sessions({
         href={href}
         rows={rows.map((row) => {
           const validClock = Number.isFinite(row.expires);
+            const targetBlocked = remote?.targets.find(t=>t.id===row.recipient_id)?.cancelled === true;
           const status = row.ended
             ? "종료"
             : !validClock
@@ -96,7 +97,10 @@ export default async function Sessions({
             id: row.id,
             recipientId: row.recipient_id,
             company: row.company ?? "연결 대상 확인 필요",
-            active: status === "유효",
+            email: remote?.targets.find(t=>t.id===row.recipient_id)?.email,
+            application: remote?.targets.find(t=>t.id===row.recipient_id)?.application,
+            created: remote?.targets.find(t=>t.id===row.recipient_id)?.created_at ? Date.parse(remote.targets.find(t=>t.id===row.recipient_id)!.created_at!)/1000 : 0,
+            active: !targetBlocked && status === "유효",
             node: (
               <article
                 id={`session-${row.id}`}
@@ -111,7 +115,7 @@ export default async function Sessions({
                   <dt>만료 (KST)</dt>
                   <dd>{validClock ? formatKst(row.expires) : "확인 필요"}</dd>
                   <dt>상태</dt>
-                  <dd>{status}</dd>
+                  <dd>{status}{targetBlocked ? " · 상위 대상 접근 취소로 열람 차단" : ""}</dd>
                 </dl>
                 {status === "유효" && (
                   <>

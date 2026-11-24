@@ -5,7 +5,7 @@ export function IssueInvitation({
   selected,
   remote,
 }: {
-  targets: { id: string; company: string; email?: string | null }[];
+  targets: { id: string; company: string; email?: string | null; application?: string|null }[];
   selected?: string;
   remote: boolean;
 }) {
@@ -28,7 +28,7 @@ export function IssueInvitation({
             {targets.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.company}
-                {t.email ? ` · ${t.email}` : ""} · {t.id.slice(0, 8)}
+                {t.email ? ` · ${t.email}` : ""} · {t.application || "지원 건 미등록"} · {t.id.slice(0, 8)}
               </option>
             ))}
           </select>

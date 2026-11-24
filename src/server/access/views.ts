@@ -17,7 +17,7 @@ export async function accessLists() {
     ...row,
     application: row.application ?? "",
     cancelled: row.status === "revoked",
-  }));
+  })).sort((a,b)=>epoch(b.created_at ?? "")-epoch(a.created_at ?? "") || b.id.localeCompare(a.id));
   const invitations = links
     .map((row) => ({
       ...row,

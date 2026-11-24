@@ -30,7 +30,7 @@ export default async function Invitations({
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
   const {
     recipient,
-    state = "active",
+    state = "all",
     result,
     invitation,
   } = await searchParams;
@@ -89,6 +89,7 @@ export default async function Invitations({
           href={href}
           rows={rows.map((row) => {
             const validClock = Number.isFinite(row.invite_until);
+            const targetBlocked = remote?.targets.find(t=>t.id===row.recipient_id)?.cancelled === true;
             const linkedSessions =
               remote?.readers.filter(
                 (session) => session.invitation_id === row.id,
@@ -106,7 +107,10 @@ export default async function Invitations({
               id: row.id,
               recipientId: row.recipient_id,
               company: row.company,
-              active: status === "활성",
+              email: remote?.targets.find(t=>t.id===row.recipient_id)?.email,
+              application: remote?.targets.find(t=>t.id===row.recipient_id)?.application,
+              created: remote?.targets.find(t=>t.id===row.recipient_id)?.created_at ? Date.parse(remote.targets.find(t=>t.id===row.recipient_id)!.created_at!)/1000 : 0,
+              active: !targetBlocked && status === "활성",
               node: (
                 <article
                   id={`invite-${row.id}`}
@@ -121,7 +125,7 @@ export default async function Invitations({
                     <dt>정책</dt>
                     <dd>{row.reusable ? "재사용 허용" : "1회 사용"}</dd>
                     <dt>상태</dt>
-                    <dd>{status}</dd>
+                    <dd>{status}{targetBlocked ? " · 상위 대상 접근 취소로 열람 차단" : ""}</dd>
                   </dl>
                   <p className="muted">
                     원문 URL은 발급 직후에만 표시되며 목록에서 복원할 수

@@ -1,4 +1,5 @@
 import { RecipientPurposeEnd } from "@/components/access/recipient-purpose-end-form";
+import { RecipientLifecycle } from "@/components/access/recipient-lifecycle";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { AdminNav } from "@/components/access/admin-nav";
@@ -38,9 +39,10 @@ export default async function RecipientPage({ params }: { params: Promise<{ id: 
           <p>연결된 초대 링크 {invites.length}개 · 유효 세션 {validSessions}개</p>
           {recipient.cancelled ? <p role="status">대상 전체 접근이 취소되었습니다.</p> : <>
             <Link className="button primary" href={`/admin/invitations?recipient=${id}`}>+ 초대 링크 생성</Link>
-            <RevokeRecipient id={id} />
+            {remote ? <RecipientLifecycle id={id} company={recipient.company} mode="revoke" /> : <RevokeRecipient id={id} />}
           </>}
           {remote && <RecipientPurposeEnd key={id} id={id} canEnd={target?.canEndPurpose === true && target.historyComplete === true && !target.purposeEndBlockedReason} endedAt={target?.purposeEndedAt ?? null} blockedReason={target?.purposeEndBlockedReason ?? "history_unknown"} />}
+          {remote && <RecipientLifecycle id={id} company={recipient.company} mode="delete" />}
           <details><summary>대상 정보 수정</summary><RecipientForm remote={!!remote} recipient={{ ...recipient, email: target?.email ?? "" }} /></details>
         </article>
         <section className="panel concept-card access-card">

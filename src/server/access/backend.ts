@@ -24,7 +24,7 @@ export async function setBackendCookie(
 }
 
 export class AccessError extends Error {
-  constructor(readonly status: number) {
+  constructor(readonly status: number, readonly code?: string, readonly existingRecipientId?: string) {
     super("Access API request failed");
   }
 }
@@ -97,7 +97,23 @@ export async function apiResponse(
   } catch {
     throw new AccessError(503);
   }
-  if (!result.ok) throw new AccessError(result.status);
+  if (!result.ok) {
+    // Only forward bounded, known error metadata, never upstream response text.
+    let code: string | undefined, existingRecipientId: string | undefined;
+    if (result.status === 409) {
+      try {
+        const reader=result.body?.getReader(); let text="",size=0;const decoder=new TextDecoder();
+        if(reader) try { while(true){const chunk=await reader.read();if(chunk.done)break;size+=chunk.value.byteLength;if(size>1024){await reader.cancel();break;}text+=decoder.decode(chunk.value,{stream:true});}text+=decoder.decode();} finally{reader.releaseLock();}
+        if (size <= 1024 && text) {
+          const data = JSON.parse(text);
+          if (data.error === "recipient_duplicate" && apiId(data.existingRecipientId ?? "")) {
+            code = "recipient_duplicate"; existingRecipientId = data.existingRecipientId;
+          }
+        }
+      } catch { /* Generic failure remains safe. */ }
+    }
+    throw new AccessError(result.status, code, existingRecipientId);
+  }
   return result;
 }
 
@@ -134,6 +150,9 @@ export type RequestRow = {
   status: "pending" | "approved" | "rejected";
   created_at: string;
   approvedRecipientId?: string | null;
+  consent_version?: string | null;
+  consent_received_at?: string | null;
+  approvedRecipientRevokedAt?: string | null;
 };
 export type RecipientRow = {
   id: string;
@@ -144,6 +163,7 @@ export type RecipientRow = {
   posting_url: string | null;
   memo: string | null;
   status: string;
+  created_at?: string;
   purposeEndedAt?: string | null;
   historyComplete?: boolean;
   canEndPurpose?: boolean;
