@@ -1,14 +1,32 @@
+import { canReadProjects } from "@/server/access/session";
+import { ProjectLock } from "@/components/access/project-lock";
 import Link from "next/link";
 import { ShellGame } from "@/features/demos/frontend/shellgame/ShellGame";
 
-export const metadata = { title: "ShellGame 실행" };
-
-export default function DemoPage() {
-  return <section className="page-section">
-    <p className="eyebrow">JAVASCRIPT / INTERACTIVE</p>
-    <h1>ShellGame</h1>
-    <p className="lede">이 브라우저에만 기록이 저장됩니다.</p>
-    <ShellGame />
-    <Link href="/lab/projects/shellgame" className="text-link">← 프로젝트 상세</Link>
-  </section>;
+export async function generateMetadata() {
+  return {
+    title: (await canReadProjects()) ? "ShellGame 실행" : "프로젝트 열람 안내",
+    robots: { index: false, follow: false },
+  };
 }
+
+export default async function DemoPage() {
+  if (!(await canReadProjects())) return <ProjectLock />;
+  return (
+    <section className="page-section">
+      <p className="eyebrow">JAVASCRIPT / INTERACTIVE</p>
+      <h1>ShellGame</h1>
+      <p className="lede">이 브라우저에만 기록이 저장됩니다.</p>
+      <ShellGame />
+      <Link
+        prefetch={false}
+        href="/lab/projects/shellgame"
+        className="text-link"
+      >
+        ← 프로젝트 상세
+      </Link>
+    </section>
+  );
+}
+
+export const dynamic = "force-dynamic";

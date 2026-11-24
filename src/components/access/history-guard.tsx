@@ -6,7 +6,11 @@ export function AccessHistoryGuard() {
   useEffect(() => {
     function refreshSensitiveHistory() {
       const path = window.location.pathname;
-      if (path !== "/" && !/^\/(work|admin|protected)(\/|$)/.test(path)) return;
+      if (
+        path !== "/" &&
+        !/^\/(work|lab|demos|admin|protected|access)(\/|$)/.test(path)
+      )
+        return;
       const main = document.getElementById("main-content");
       if (main) main.style.visibility = "hidden";
       // A new document request rechecks permissions instead of restoring a cached React tree.

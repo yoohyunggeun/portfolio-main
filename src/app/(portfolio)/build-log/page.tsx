@@ -1,31 +1,67 @@
 import Link from "next/link";
 import { TaskList } from "@/components/build-log/task-list";
-import { latestEntry } from "@/content/build-log/entries";
-import { tasks } from "@/content/build-log/tasks";
-
+import { currentTasks } from "@/content/build-log/releases";
+import { BuildHistory } from "@/components/build-log/history";
 export const metadata = { title: "제작 과정" };
-
 export default function BuildLog() {
-  const summary = ["visitor-design", "local-access", "build-log", "auth-design", "release"].flatMap((id) => tasks.filter((task) => task.id === id));
-  return <section className="page-section">
-    <p className="eyebrow">BUILD LOG / CAREER × CODE</p>
-    <h1>이 포트폴리오는 이렇게 만들고 있습니다</h1>
-    <p className="lede">계획, 현재 단계, AI가 도운 작업과 제작자가 확인한 결과를 공개합니다.</p>
-    <section className="panel concept-card secondary-panel log-current">
-      <p className="eyebrow">로컬 구현</p>
-      <dl><dt>현재 작업</dt><dd>제작 과정과 전체 작업 목록</dd><dt>다음</dt><dd>운영 인증·초대 세션·DB 상세 설계</dd></dl>
-    </section>
-    <section className="panel concept-card log-block">
-      <div className="section-heading"><h2>작업 계획과 진행 상태</h2><Link className="text-link" href="/build-log/tasks">전체 작업 보기 →</Link></div>
-      <TaskList items={summary} />
-    </section>
-    <div className="concept-grid log-notes">
-      <section className="panel concept-card log-current"><p className="eyebrow">최근 기록</p><h2>{latestEntry.title}</h2>
-        <dl><dt>AI 지원</dt><dd>{latestEntry.assistance}</dd><dt>직접 검토</dt><dd>{latestEntry.review}</dd><dt>근거</dt><dd>{latestEntry.evidence}</dd></dl>
+  return (
+    <section className="page-section">
+      <p className="eyebrow">BUILD LOG / GEUNYFOLIO</p>
+      <h1>최신 상태도, 지나온 과정도 남깁니다.</h1>
+      <p className="lede">
+        날짜별 기록 안에서 기능·권한·서버·검증을 나눠 보고, 필요한 항목만
+        펼쳐봅니다.
+      </p>
+      <section className="panel concept-card log-current current-release">
+        <span className="log-status">현재 운영</span>
+        <div>
+          <h2>1차 운영 반영·실제 검증 완료</h2>
+          <p className="muted">
+            최근 반영 2026.11.24 · 로그인·보호 열람·개인정보·시간별 정리
+          </p>
+        </div>
       </section>
-      <section className="panel concept-card"><p className="eyebrow lab-label">기획 후보</p><h2>AI 제작 로그 요약</h2>
-        <p className="muted">공개 가능한 작업 기록으로 진행 상황 요약 초안을 만들고, 제작자가 상태와 근거를 확인한 뒤 게시하는 기능입니다.</p>
+      <aside className="panel concept-card current-ui-review">
+        <span className="log-status">구현·검증 중</span>
+        <p>
+          UI v3.1 승인안을 구현하고 있습니다. 운영 반영과 실제 검증은 완료 후 새
+          기록으로 남깁니다.
+        </p>
+      </aside>
+      <BuildHistory />
+      <details className="panel concept-card log-block">
+        <summary>현재 작업 계획과 상태</summary>
+        <TaskList items={currentTasks} />
+        <Link className="text-link" href="/build-log/tasks">
+          전체 작업·단계·상태 필터 →
+        </Link>
+      </details>
+      <section className="concept-grid two log-notes">
+        <article className="panel concept-card">
+          <h2>AI 지원</h2>
+          <p className="muted">
+            화면·코드 초안, 테스트 자동화와 기록 정리에 AI의 도움을 받았습니다.
+          </p>
+        </article>
+        <article className="panel concept-card">
+          <h2>소유자 판단</h2>
+          <p className="muted">
+            공개 범위·문구·UI 승인과 운영 반영에 대한 선택은 제작자가
+            결정합니다.
+          </p>
+        </article>
       </section>
-    </div>
-  </section>;
+      <aside className="panel concept-card">
+        <h2>기록 원칙</h2>
+        <p className="muted">
+          최신 요약과 과거 본문을 구분합니다. 정정은 날짜·이유와 함께 새
+          이력으로 연결하고, 당시 상태를 현재 결과로 덮어쓰지 않습니다.
+        </p>
+        <p className="muted">
+          AI 제작 로그 자동 요약은 기획 후보이며, 현재 이 기록은 검토해 작성한
+          내용입니다.
+        </p>
+      </aside>
+    </section>
+  );
 }
