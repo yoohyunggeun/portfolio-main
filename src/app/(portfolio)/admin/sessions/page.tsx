@@ -24,6 +24,7 @@ export default async function Sessions({
     state?: string;
     result?: string;
     invitation?: string;
+    group?: string;
   }>;
 }) {
   if (!(await sessionExpiry("admin"))) redirect("/admin/login");
@@ -32,6 +33,7 @@ export default async function Sessions({
     state = "all",
     result,
     invitation,
+    group,
   } = await searchParams;
   const { springAccess } = await import("@/server/access/backend");
   const remote = springAccess()
@@ -81,6 +83,7 @@ export default async function Sessions({
         <ManagementNotice kind={result} />
       )}
       <GroupedAccessList
+        openGroupId={group}
         state={state}
         href={href}
         rows={rows.map((row) => {

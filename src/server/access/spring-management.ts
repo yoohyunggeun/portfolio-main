@@ -96,18 +96,18 @@ export async function manageSpring(form: FormData) {
   revalidatePath("/admin", "layout");
   const returnRecipient = String(form.get("returnRecipient") ?? "");
   const returnInvitation = String(form.get("returnInvitation") ?? "");
+  const state = String(form.get("returnState") ?? "all");
+  const filterRecipient = String(form.get("returnFilterRecipient") ?? "");
   const destination = (collection: string, result: string) =>
     `/admin/${collection === "sessions" && apiId(returnInvitation) ? "invitations" : collection}?` +
     new URLSearchParams({
-      state:
-        collection === "sessions" && apiId(returnInvitation)
-          ? "all"
-          : "inactive",
+      state: ["all", "active", "inactive"].includes(state) ? state : "all",
       result,
-      ...(apiId(returnRecipient) ? { recipient: returnRecipient } : {}),
+      ...(apiId(filterRecipient) ? { recipient: filterRecipient } : {}),
+      ...(apiId(returnRecipient) ? { group: returnRecipient } : {}),
       ...(collection === "sessions" && apiId(returnInvitation)
         ? { invitation: returnInvitation }
-        : {}),
+        : collection === "invitations" && !deletedCollection && apiId(id) ? { invitation: id } : {}),
     }) +
     (collection === "sessions" && apiId(returnInvitation)
       ? `#invite-${returnInvitation}`

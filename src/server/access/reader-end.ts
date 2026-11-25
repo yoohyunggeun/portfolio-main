@@ -12,6 +12,8 @@ export async function endReading(_: ReaderEndState): Promise<ReaderEndState> {
     if (springAccess()) {
       await api("reader/auth/logout", { method: "POST" });
       await setBackendCookie("reader", "", 0);
+      // Clear this browser's old administrator credential without revoking other sessions.
+      await setBackendCookie("admin", "", 0);
     } else {
       if (!await isLocalPreview()) return { error: "현재는 열람을 종료할 수 없습니다." };
       const jar = await cookies();

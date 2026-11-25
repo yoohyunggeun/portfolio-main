@@ -171,6 +171,7 @@ export async function redeemInvite(form: FormData) {
       issued = await api<Issued>("invitations/redeem", {
         method: "POST",
         body: { token: value },
+        includeSessions: false,
       });
     } catch (error) {
       redirect(
@@ -181,7 +182,17 @@ export async function redeemInvite(form: FormData) {
     }
     if (!issued.token) redirect("/access?reason=invite");
     await setBackendCookie("reader", issued.token, 30 * 86400);
-    redirect("/protected/mes-case");
+    await setBackendCookie("admin", "", 0);
+    revalidatePath("/", "layout");
+    let destination = "/access?reason=unavailable";
+    try {
+      const session = await api<import("./session").AccessSession>("access/session");
+      if (session.role === "reader" && session.expiresAt && Date.parse(session.expiresAt) > Date.parse(session.serverNow)) {
+        if (session.scope === "ALL" && session.projectScope === "ALL") destination = "/";
+        else if (session.scope === "RESOURCE" && session.allowedResources.includes("mes-case")) destination = "/protected/mes-case";
+      }
+    } catch { /* Keep unknown scope closed; never infer access from a cookie. */ }
+    redirect(destination);
   }
   if (!(await isLocalPreview())) redirect("/");
   if (!validToken(value)) redirect("/access?resource=mes-case&reason=invite");

@@ -17,9 +17,10 @@ export async function GET(request: NextRequest) {
   }
   try {
     const session = await api<{ token: string; maxAgeSeconds: number }>("admin/auth/exchange", {
-      method: "POST", body: { state, verifier, code },
+      method: "POST", body: { state, verifier, code }, includeSessions: false,
     });
     await setBackendCookie("admin", session.token, session.maxAgeSeconds);
+    await setBackendCookie("reader", "", 0);
     return NextResponse.redirect(new URL("/admin", origin));
   } catch {
     return NextResponse.redirect(new URL("/admin/login?error=google", origin));

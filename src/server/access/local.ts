@@ -65,7 +65,8 @@ export function db() {
 export async function sessionExpiry(role: "admin" | "reader") {
   const { api, backendCookie, springAccess } = await import("./backend");
   if (springAccess()) {
-    if (role !== "admin" || !(await cookies()).has(backendCookie("admin"))) return 0;
+    const jar = await cookies();
+    if (role !== "admin" || jar.has(backendCookie("reader")) || !jar.has(backendCookie("admin"))) return 0;
     try {
       return (await api<{ admin: boolean }>("admin/session")).admin ? 1 : 0;
     } catch {

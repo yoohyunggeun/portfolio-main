@@ -11,7 +11,7 @@ export default async function Invite({ params }: { params: Promise<{ token: stri
   return <div className="page-section access-shell">
     <form className="panel concept-card access-card" action={redeemInvite}>
       <p className="eyebrow">PRIVATE INVITATION</p><h1>상세 자료 열람 초대</h1>
-      <p className="muted">{springAccess() ? "전체 보호 자료" : resource.title} · 열람 시작 후 1시간</p>
+      <p className="muted">{springAccess() ? "승인된 범위의 보호 자료" : resource.title} · 열람 시작 후 1시간</p>
       <input type="hidden" name="token" value={token} />
       <button className="button primary">열람 시작</button>
     </form>

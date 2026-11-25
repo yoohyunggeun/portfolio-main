@@ -1050,6 +1050,9 @@ h2 {
   align-items: start;
   gap: 1.5rem;
 }
+.management-notice {
+  margin-block: 0 1.5rem;
+}
 .admin-columns aside {
   grid-row: 1;
   grid-column: 2;

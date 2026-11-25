@@ -1,5 +1,6 @@
 import { ManagementNotice } from "@/components/access/management-notice";
 import { InvitationSessions } from "@/components/access/invitation-sessions";
+import { InvitationUrl } from "@/components/access/invitation-url";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminNav } from "@/components/access/admin-nav";
@@ -75,10 +76,10 @@ export default async function Invitations({
           ← {target.company} 대상 상세
         </Link>
       )}
-      <div className="admin-columns">
         {(result === "deleted" || result === "updated") && (
           <ManagementNotice kind={result} />
         )}
+      <div className="admin-columns">
         <GroupedAccessList
           openGroupId={
             invitation
@@ -128,9 +129,9 @@ export default async function Invitations({
                     <dd>{status}{targetBlocked ? " · 상위 대상 접근 취소로 열람 차단" : ""}</dd>
                   </dl>
                   <p className="muted">
-                    원문 URL은 발급 직후에만 표시되며 목록에서 복원할 수
-                    없습니다.
+                    유효한 링크는 관리자 인증 후 URL을 다시 조회할 수 있습니다. 원문 보관 이전 링크는 조회할 수 없습니다.
                   </p>
+                  {!targetBlocked && status === "활성" ? <InvitationUrl key={`${row.id}:${row.invite_until}`} id={row.id} revision={`${row.invite_until}`}/> : <p className="muted">현재 유효하지 않은 링크의 URL은 표시하지 않습니다.</p>}
                   {status === "활성" && (
                     <details>
                       <summary>기한 변경</summary>

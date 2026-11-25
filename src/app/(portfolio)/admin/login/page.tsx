@@ -15,6 +15,7 @@ export default async function Login({
       <div className="page-section access-shell">
         <form action={loginPreview} className="panel concept-card access-card">
           <h1>관리자 로그인</h1>
+          <p className="muted">초대 열람 권한으로는 관리할 수 없습니다. Google 관리자 인증을 완료하면 이 브라우저가 관리자 모드로 전환됩니다.</p>
           {(await searchParams).error === "google" && (
             <p role="alert">
               Google 로그인을 완료하지 못했습니다. 다시 시도해 주세요.

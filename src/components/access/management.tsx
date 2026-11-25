@@ -3,6 +3,7 @@
 import { InviteLink } from "./forms";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { manageAccess } from "@/server/access/management";
+import { useSearchParams } from "next/navigation";
 
 export function ManageForm({
   operation,
@@ -21,6 +22,13 @@ export function ManageForm({
 }) {
   const [message, action, pending] = useActionState(manageAccess, "");
   const submitted = useRef(false);
+  const search = useSearchParams();
+  const [hideIssuedLink, setHideIssuedLink] = useState(false);
+  useEffect(() => {
+    const clear = () => setHideIssuedLink(true);
+    window.addEventListener("portfolio:invitation-invalidated", clear);
+    return () => window.removeEventListener("portfolio:invitation-invalidated", clear);
+  }, []);
   const [issueContext, setIssueContext] = useState<{
     target: string;
     policy: string;
@@ -40,6 +48,8 @@ export function ManageForm({
           return;
         }
         submitted.current = true;
+        if (["cancel-invite", "delete-invite"].includes(operation))
+          window.dispatchEvent(new Event("portfolio:invitation-invalidated"));
         if (operation === "issue") {
           const form = event.currentTarget;
           const data = new FormData(form);
@@ -60,6 +70,8 @@ export function ManageForm({
       aria-busy={pending}
     >
       <input type="hidden" name="operation" value={operation} />
+      <input type="hidden" name="returnState" value={["all", "active", "inactive"].includes(search.get("state") ?? "") ? search.get("state")! : "all"} />
+      <input type="hidden" name="returnFilterRecipient" value={search.get("recipient") ?? ""} />
       {id && <input type="hidden" name="id" value={id} />}
       {returnRecipient && (
         <input type="hidden" name="returnRecipient" value={returnRecipient} />
@@ -90,7 +102,7 @@ export function ManageForm({
           className="access-card"
           aria-label="관리 작업 결과"
         >
-          {message.startsWith("/invite/") ? (
+          {message.startsWith("/invite/") && !hideIssuedLink ? (
             <>
               <p role="status">초대 링크를 생성했습니다.</p>
               {issueContext && (
@@ -106,7 +118,7 @@ export function ManageForm({
               <InviteLink path={message} />
             </>
           ) : (
-            <p role="status">{message}</p>
+            <p role="status">{message.startsWith("/invite/") ? "링크 관리 상태가 변경되었습니다. 최신 목록에서 유효 상태를 확인해 주세요." : message}</p>
           )}
         </div>
       )}

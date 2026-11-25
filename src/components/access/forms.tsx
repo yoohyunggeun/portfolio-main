@@ -210,18 +210,28 @@ export function DecisionForm({
   );
 }
 
-export function InviteLink({ path }: { path: string }) {
+export function InviteLink({ path, expiresAt, retrievable = false }: { path: string; expiresAt?: string; retrievable?: boolean }) {
   const [notice, setNotice] = useState("");
   const [url, setUrl] = useState("");
   const [copying, setCopying] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const id = useId();
+  const [hidden,setHidden]=useState(false);
+  useEffect(()=>{
+    const clear=()=>{setUrl("");setHidden(true);};
+    window.addEventListener("portfolio:invitation-invalidated",clear);
+    const check=()=>{if(expiresAt && (!Number.isFinite(Date.parse(expiresAt)) || Date.parse(expiresAt)<=Date.now()))clear();};
+    check();
+    const timer=expiresAt?setInterval(check,1000):undefined;
+    return()=>{window.removeEventListener("portfolio:invitation-invalidated",clear);if(timer)clearInterval(timer);};
+  },[expiresAt]);
   useEffect(() => {
     setUrl(new URL(path, window.location.origin).href);
   }, [path]);
+  if(hidden)return <p role="status">링크 상태가 변경되었거나 만료되어 URL을 숨겼습니다. 최신 목록에서 다시 확인해 주세요.</p>;
   return (
     <div className="access-card issued-invitation">
-      <label htmlFor={id}>생성된 초대 URL</label>
+      <label htmlFor={id}>{retrievable ? "유효 상태를 확인한 초대 URL" : "생성된 초대 URL"}</label>
       <div className="invitation-url-row">
         <input
           id={id}
@@ -257,8 +267,7 @@ export function InviteLink({ path }: { path: string }) {
         </button>
       </div>
       <p id={id + "-hint"} className="muted">
-        원문 URL은 발급 직후에만 표시됩니다. 새로고침하거나 화면을 떠나면 다시
-        복원할 수 없으니 필요한 곳에 안전하게 전달해 주세요.
+        URL은 현재 화면 메모리에만 표시합니다. 화면을 떠난 뒤에는 관리 목록에서 유효 상태를 다시 확인해 조회하세요. 원문 보관 이전 링크는 재조회할 수 없습니다.
       </p>
       {notice && <p role="status">{notice}</p>}
       <Link href={path} prefetch={false} className="text-link">

@@ -75,7 +75,11 @@ export async function apiResponse(
     headers.set("CF-Access-Client-Id", accessId);
     headers.set("CF-Access-Client-Secret", accessSecret);
   }
-  for (const role of ["admin", "reader"] as const) {
+  // An invitation context must never inherit an administrator credential.
+  // Even an expired reader cookie requires an explicit Google sign-in to switch back.
+  const roles: Array<"admin" | "reader"> = jar?.has(backendCookie("reader"))
+    ? ["reader"] : ["admin"];
+  for (const role of roles) {
     const value = jar?.get(backendCookie(role))?.value;
     if (value) headers.set(`X-${role}-Session`, value);
   }
@@ -109,6 +113,7 @@ export async function apiResponse(
           if (data.error === "recipient_duplicate" && apiId(data.existingRecipientId ?? "")) {
             code = "recipient_duplicate"; existingRecipientId = data.existingRecipientId;
           }
+          if (["invitation_url_unavailable", "invitation_inactive"].includes(data.error)) code = data.error;
         }
       } catch { /* Generic failure remains safe. */ }
     }

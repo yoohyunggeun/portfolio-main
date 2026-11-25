@@ -18,7 +18,7 @@ export default async function PortfolioLayout({
   const session = await accessSession();
   return (
     <div className="site">
-      <AccessHistoryGuard />
+      <AccessHistoryGuard role={session.role} />
       <a className="skip-link" href="#main-content">
         본문으로 건너뛰기
       </a>
