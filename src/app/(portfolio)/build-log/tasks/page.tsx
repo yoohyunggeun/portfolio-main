@@ -41,7 +41,7 @@ export default async function BuildTasks({
         설계부터 첫 공개, 개별 백엔드·AI 확장까지 공개용 로드맵을 모았습니다.
       </p>
       <p className="muted">
-        현재 상태는 2026-11-24 운영 확인을 반영합니다.{" "}
+        현재 상태는 2026-11-25 기준입니다. 기존 운영 완료와 UI v3.3 개발 완료·운영 보류를 구분합니다.{" "}
         <Link className="text-link" href="/build-log#legacy-local-history">
           기존 작업의 당시 상태와 원문은 보존 이력에서 볼 수 있습니다.
         </Link>

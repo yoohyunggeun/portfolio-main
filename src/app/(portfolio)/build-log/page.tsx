@@ -13,20 +13,21 @@ export default function BuildLog() {
         펼쳐봅니다.
       </p>
       <section className="panel concept-card log-current current-release">
-        <span className="log-status">현재 운영</span>
+        <span className="log-status">최신 개발 · 운영 보류</span>
         <div>
-          <h2>UI v3.1 운영 반영·실제 검증 완료</h2>
+          <h2>UI v3.3 개발·검증 완료</h2>
           <p className="muted">
-            최근 UI 반영 2026.11.24 · PC·모바일·프로젝트 권한·열람 종료
+            2026.11.25 · 두 테마 · 중앙 슬라이드 · 입자 효과 · Storybook
           </p>
         </div>
       </section>
       <aside className="panel concept-card current-ui-review">
-        <span className="log-status">운영 검증 완료</span>
+        <span className="log-status">현재 운영 · v3.2 후속 개선</span>
         <p>
-          UI v3.1을 운영에 반영하고 실제 권한·열람 종료를 확인했습니다. 개발
-          계획과 과거 결과는 아래 이력에 보존하며, 합성 검증과 운영 실측을
-          구분합니다.
+          운영은 관리자 UX·미발급 대상 처리·관리자와 초대 방문자 역할 분리까지
+          반영한 버전입니다. 최신 운영 확인은 2026.11.25이며, UI v3.3은 개발
+          미리보기와 분리된 시험 환경에서만 검증했습니다. 운영 반영은 보류 중입니다.
+          과거 기록과 합성·운영 검증 결과는 아래에서 구분해 확인할 수 있습니다.
         </p>
       </aside>
       <BuildHistory />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./ui-v33.css";
 
 export const metadata: Metadata = {
   title: { default: "Geunyfolio", template: "%s | Geunyfolio" },
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ko"><body>{children}</body></html>;
+  return <html lang="ko" data-theme="black" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: `(function(){try{document.documentElement.dataset.theme=localStorage.getItem('portfolio-ui-theme-v33')==='white'?'white':'black'}catch(e){}})()` }} /></head><body>{children}</body></html>;
 }

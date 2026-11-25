@@ -8,6 +8,7 @@ import { AdminEndForm } from "@/components/access/admin-end-form";
 import { ReaderEndForm } from "@/components/access/reader-end-form";
 import { endReading } from "@/server/access/reader-end";
 import { PermissionBoundary } from "@/components/access/permission-boundary";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 export const dynamic = "force-dynamic";
 
 export default async function PortfolioLayout({
@@ -23,7 +24,7 @@ export default async function PortfolioLayout({
         본문으로 건너뛰기
       </a>
       <header className="site-header">
-        <Link href="/" className="brand">
+        <Link href="/" className="brand" aria-label="GEUNYFOLIO Home">
           <Image
             className="brand-wordmark"
             src="/geunyfolio.png"
@@ -32,8 +33,11 @@ export default async function PortfolioLayout({
             height={720}
             unoptimized
           />
+          <span className="brand-light" aria-hidden="true">GEUNY<span>FOLIO</span></span>
         </Link>
         <Navigation />
+        <div className="header-controls">
+        <ThemeToggle />
         <div className={`session-badge ${session.role}`}>
           {session.role === "admin" ? (
             <Link href="/admin" prefetch={false}>
@@ -52,6 +56,7 @@ export default async function PortfolioLayout({
               {session.unavailable ? "접근 상태 확인 필요" : "일반 방문"}
             </span>
           )}
+        </div>
         </div>
       </header>
       <main id="main-content" tabIndex={-1}>

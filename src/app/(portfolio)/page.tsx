@@ -8,7 +8,9 @@ import { labAreas } from "@/content/projects/lab-areas";
 import { HomeAccessNotice } from "@/components/access/home-access-notice";
 import { accessSession, canReadProjects } from "@/server/access/session";
 import { SessionStatus } from "@/components/access/session-status";
-import { LockIcon } from "@/components/access/lock-icon";
+import { ProjectSummaryCard } from "@/components/ui/project-summary-card";
+import { HeroSlider } from "@/components/ui/hero-slider";
+import { ParticleField } from "@/components/ui/particle-field";
 
 export const dynamic = "force-dynamic";
 
@@ -16,14 +18,7 @@ function LockedCards() {
   return (
     <div className="home-list grid gap-3 sm:grid-cols-2" aria-hidden="true">
       {Array.from({ length: 4 }, (_, index) => (
-        <div className="panel locked-project" key={index}>
-          <span />
-          <span />
-          <span />
-          <i>
-            <LockIcon />
-          </i>
-        </div>
+        <ProjectSummaryCard locked key={index} />
       ))}
     </div>
   );
@@ -34,8 +29,9 @@ export default async function Home() {
   const admin = await canReadProjects();
 
   return (
-    <div className="home home-v22">
+    <div className="home home-v22 home-v33">
       <section className="hero">
+        <ParticleField />
         <div>
           <p className="eyebrow">웹 개발 · 서버 구축·운영 · 고객 기술 제안</p>
           <h1>
@@ -55,15 +51,9 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        <aside className="panel concept-card home-capabilities">
-          <h2>역량 한눈에 보기</h2>
-          <p className="eyebrow">실무 · 개발·연동 · 구축·운영 · 기술 지원</p>
-          <p className="eyebrow lab-label">
-            개인 · Frontend · Backend · Server · AI / LLM
-          </p>
-          <Link prefetch={false} href="/build-log" className="text-link">
-            제작 과정 보기 →
-          </Link>
+        <aside className="home-capabilities-v33">
+          <HeroSlider />
+          <div className="capability-context"><p>실무 · 개발·연동 · 구축·운영 · 기술 지원<br />개인 · Frontend · Backend · Server · AI / LLM</p><Link prefetch={false} href="/build-log" className="text-link">제작 과정 보기 →</Link></div>
         </aside>
       </section>
       <section className="home-representative" aria-labelledby="work-featured">
@@ -81,19 +71,7 @@ export default async function Home() {
           <ul className="home-list grid gap-3 sm:grid-cols-2">
             {(await representativeWork(true)).map((record) => (
               <li key={record.id}>
-                <Link
-                  className="panel project-card"
-                  href={`/work/${record.slug}`}
-                  prefetch={false}
-                >
-                  <span>
-                    <small className="eyebrow lab-label">
-                      {workRoleLabel(record.roles[0])}
-                    </small>
-                    <strong>{record.title}</strong>
-                    <span className="muted">{record.summary}</span>
-                  </span>
-                </Link>
+                <ProjectSummaryCard href={`/work/${record.slug}`} label={workRoleLabel(record.roles[0])} title={record.title} summary={record.summary ?? ""} />
               </li>
             ))}
           </ul>
@@ -136,23 +114,7 @@ export default async function Home() {
           <ul className="home-list grid gap-3 sm:grid-cols-2">
             {labAreas.map(({ slug, title, description, examples, status }) => (
               <li key={slug}>
-                <Link
-                  prefetch={false}
-                  className="panel project-card"
-                  href={`/lab/${slug}`}
-                >
-                  <span>
-                    <small className="eyebrow lab-label">
-                      {slug === "frontend" ? "구현 기능 12개" : status}
-                    </small>
-                    <strong>{title}</strong>
-                    <span className="muted">
-                      {slug === "frontend" && `${title} · `}
-                      {examples}
-                      {status && ` · ${status}`}
-                    </span>
-                  </span>
-                </Link>
+                <ProjectSummaryCard href={`/lab/${slug}`} label={slug === "frontend" ? "구현 기능 12개" : status} title={title} summary={`${slug === "frontend" ? `${title} · ` : ""}${examples}${status ? ` · ${status}` : ""}`} />
               </li>
             ))}
           </ul>

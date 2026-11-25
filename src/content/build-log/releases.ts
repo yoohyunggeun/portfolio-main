@@ -25,6 +25,82 @@ export const releases: {
   works: ReleaseWork[];
 }[] = [
   {
+    id: "ui-v33-development",
+    date: "2026-11-25",
+    title: "UI v3.3 개발과 직접 확인 가능한 미리보기",
+    status: "개발·검증 완료 · 운영 보류",
+    works: [
+      {
+        id: "ui-v33-development-screens",
+        area: "화면·기능",
+        title: "두 테마·중앙 카드·입자·로딩",
+        background: "기존 경력·기술 설명과 실행 기능을 유지하며 화면 표현을 정리했습니다.",
+        change: "블랙·화이트 테마, 여섯 역량의 중앙·양옆 세 카드, 장식용 입자와 로딩을 적용했습니다. 테마 스위치는 문구가 든 손잡이가 움직이며 현재 테마를 Black/White로 표시합니다. 헤더 배지와 크기·모서리를 맞추고 간격은 8px로 정리했습니다.",
+        version: "UI v3.3 개발본 · 개발·검증 2026-11-25 · 운영 미반영",
+        verified: "320~2560px 다섯 폭과 두 테마, 키보드·스와이프·자동재생·일시정지·모션 줄이기, 미지원·저장 실패 환경을 확인했습니다. 기존 콘텐츠와 34개 기록·12개 기능의 원본을 보존했습니다. 물리 모바일·운영의 새 UI 검증은 하지 않았습니다.",
+        related: "/",
+      },
+      {
+        id: "ui-v33-development-storybook",
+        area: "운영·검증",
+        title: "실제 컴포넌트와 분리된 검증",
+        background: "시안 이미지뿐 아니라 직접 조작할 수 있는 개발 화면이 필요했습니다.",
+        change: "페이지에서 쓰는 컴포넌트 7개를 Storybook·문서·동작 검사로 연결했습니다. 개발 미리보기의 관리자·전체 초대·제한 초대는 합성 자료로 분리했습니다.",
+        version: "UI v3.3 · Next/Storybook 개발 빌드 완료 · 2026-11-25",
+        verified: "Storybook 실제 play와 두 테마 14개 자동 접근성 검사에서 위반이 없었고, 실제 Next와 합성 API의 역할·모션 8개 시나리오를 확인했습니다. 전체 접근성 인증이나 실제 Google·운영 DB 재시험을 뜻하지 않습니다. 개발 완료 후 운영 반영은 보류했습니다.",
+        related: "/build-log/tasks",
+      },
+    ],
+  },
+  {
+    id: "role-url-production",
+    date: "2026-11-25",
+    title: "관리자·방문자 역할 분리와 안전한 링크 조회",
+    status: "운영 반영·읽기 검증 완료",
+    works: [{
+      id: "role-url-production-boundary",
+      area: "인증·권한",
+      title: "명시적 역할 전환과 초대 URL 관리",
+      background: "같은 브라우저에 남은 관리자 인증이 초대 열람에 묵시적으로 섞이지 않도록 정리했습니다.",
+      change: "초대 열람과 관리자 로그인을 분리하고 열람 종료 후 일반 방문으로 돌아가도록 했습니다. 새 링크는 암호화해 유효 상태에서 관리자만 재조회할 수 있게 했으며, 취소 후 필터·목록 배치를 유지했습니다. 전체 초대는 홈, 제한 초대는 허용된 자료로 연결합니다.",
+      version: "운영 FE cb3f533 / BE 83afe56 · 반영·확인 2026-11-25",
+      verified: "분리된 실제 백엔드·DB·Next에서 기능 8개를 확인한 뒤, 운영의 일반 방문 권한·캐시와 정상 관리자 읽기·로그아웃을 검증했습니다. 기존 링크는 모두 종료 상태여서 운영 URL 복호 조회·새 초대 발급은 하지 않았습니다. 원문을 보관하지 않은 이전 링크는 복원할 수 없습니다. 기존 고객 데이터를 변경·삭제하지 않았습니다.",
+      related: "/access/status",
+    }],
+  },
+  {
+    id: "never-issued-production",
+    date: "2026-11-25",
+    title: "초대를 발급하지 않은 대상의 종료 흐름 보완",
+    status: "운영 반영·읽기 검증 완료",
+    works: [{
+      id: "never-issued-production-lifecycle",
+      area: "서버·DB",
+      title: "확인된 신규 대상의 종료·정리 기준",
+      background: "한 번도 권한을 발급하지 않은 신규 대상에 과거 권한의 종료 시각을 요구하는 모순을 해결했습니다.",
+      change: "완전한 신규 이력이 확인된 경우만 별도 처리하고, 실제로 없었던 권한 종료 시각을 만들지 않았습니다. 화면 안내와 API·시간별 정리 기준을 함께 맞췄습니다.",
+      version: "당시 운영 FE d23e270 / BE 10a79cc · 반영 2026-11-25",
+      verified: "분리된 실제 백엔드·DB·Next의 7개 기능 검증과 운영 읽기·권한 경계 확인을 구분했습니다. 실제 고객의 대상 취소·목적 종료·삭제나 기간 경과 파기를 새로 실행하지 않았으며, 불완전한 과거 이력을 임의로 허용하지 않았습니다.",
+      related: "/privacy",
+    }],
+  },
+  {
+    id: "admin-v32-production",
+    date: "2026-11-24",
+    title: "관리자 UI v3.2와 연결 기록 정리",
+    status: "당시 운영 반영·읽기 검증 완료",
+    works: [{
+      id: "admin-v32-production-management",
+      area: "화면·기능",
+      title: "대상·요청·링크·세션의 관계를 명확하게",
+      background: "승인된 요청과 실제 초대 대상, 연결된 권한 기록을 혼동하지 않도록 정리했습니다.",
+      change: "회사 아래 이메일·지원 건·대상을 구분하고 전체 필터·최신 등록순을 맞췄습니다. 실제 동의 증적 표시, 정확한 승인 대상 수정 연결, 접근 취소와 영구 삭제의 영향 미리보기를 구분했습니다. 링크의 연결 세션부터 명시적으로 정리하도록 안내했습니다.",
+      version: "UI v3.2 및 관리자 UX 후속 · 운영 반영 2026-11-24",
+      verified: "생성·수정·삭제 양성 동작은 분리된 DB·실제 앱에서 검증했습니다. 운영에서는 정상 관리자 조회·수정 화면 진입·미리보기·로그아웃과 일반 방문자 캐시 경계를 확인했으며 기존 데이터에 대한 저장·발급·취소·삭제는 실행하지 않았습니다.",
+      related: "/build-log",
+    }],
+  },
+  {
     id: "ui-v31-production",
     date: "2026-11-24",
     title: "UI v3.1 운영 반영과 실제 권한 검증",
@@ -191,13 +267,25 @@ const completed = new Set([
   "access-api",
   "release",
 ]);
+const currentResults: Record<string, string> = {
+  "auth-design": "Google 관리자 인증·초대 범위·발급·만료·연장·취소·자기 종료 규칙 구현 및 검증 완료",
+  "build-log": "날짜·분야·작업 탐색과 원본 보존 · v3.3 개발 완료와 기존 운영 상태를 분리해 최신화",
+  "access-api": "요청·승인·동의·대상·링크·세션과 보호 자료의 서버 인증 연동 완료",
+  "release": "1차 운영과 후속 관리자·권한 개선 검증 완료 · 새 UI v3.3의 운영 반영은 보류",
+};
+const recentTasks: typeof tasks = [
+  { id: "admin-v32", phase: "구현", title: "관리자 UI·대상과 연결 기록 관리", status: "완료", result: "v3.2 및 후속 관리자 UX 반영·운영 읽기 검증 완료 · 기존 데이터 보존" },
+  { id: "role-url", phase: "검증·공개", title: "관리자·초대 역할 분리와 안전한 URL 조회", status: "완료", result: "분리 환경 기능8·운영 권한/관리자 읽기·캐시 검증 완료 · 이전 미보관 URL 복원 불가 안내" },
+  { id: "ui-v33", phase: "구현", title: "UI v3.3·테마·모션·Storybook", status: "완료", result: "개발·빌드·반응형·합성 역할·Storybook 검사 완료 · 운영 미반영" },
+  { id: "ui-v33-production", phase: "검증·공개", title: "UI v3.3 운영 반영", status: "예정", result: "사용자 승인 전 보류 · 현재 운영은 기존 검증 버전 유지" },
+];
 // The original task array is retained unchanged as a historical snapshot.
-export const currentTasks = tasks.map((task) =>
+export const currentTasks = [...tasks.map((task) =>
   completed.has(task.id)
     ? {
         ...task,
         status: "완료" as const,
-        result: task.result + " · 후속 완료 근거: 2026-11-24 1차 운영 릴리스",
+        result: currentResults[task.id],
       }
     : task,
-);
+), ...recentTasks];
