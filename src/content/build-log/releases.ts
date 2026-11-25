@@ -25,6 +25,22 @@ export const releases: {
   works: ReleaseWork[];
 }[] = [
   {
+    id: "ui-v33-production",
+    date: "2026-11-25",
+    title: "UI v3.3 운영 반영과 실제 화면 확인",
+    status: "운영 반영·읽기 검증 완료",
+    works: [{
+      id: "ui-v33-production-readonly",
+      area: "운영·검증",
+      title: "두 테마·새 홈·기존 권한 경계 확인",
+      background: "개발·합성 검증을 마친 제품 변경만 운영에 반영했습니다.",
+      change: "블랙·화이트 테마와 움직이는 텍스트 손잡이, 중앙 카드·입자·로딩을 적용했습니다. Storybook과 합성 시험 환경은 운영에 포함하지 않았습니다.",
+      version: "FE bcb142d · 운영 확인 2026-11-25 20:03–20:06 KST · 서울 icn1",
+      verified: "운영 PC1440·모바일390의 두 테마와 일반 방문 권한·HTML/RSC·캐시·상태 경로를 확인했습니다. 정상 Google 관리자의 기존 네 목록·설정·새 홈 조회와 로그아웃 후 새 일반 방문 접근 차단을 확인했습니다. 기존 고객 데이터·초대·권한은 생성·변경·삭제하지 않았습니다. 역할별 양성 기능과 전체 모션 검사는 앞선 개발·합성 결과이며 물리 모바일·전체 접근성 인증을 뜻하지 않습니다.",
+      related: "/",
+    }],
+  },
+  {
     id: "ui-v33-development",
     date: "2026-11-25",
     title: "UI v3.3 개발과 직접 확인 가능한 미리보기",
@@ -269,15 +285,15 @@ const completed = new Set([
 ]);
 const currentResults: Record<string, string> = {
   "auth-design": "Google 관리자 인증·초대 범위·발급·만료·연장·취소·자기 종료 규칙 구현 및 검증 완료",
-  "build-log": "날짜·분야·작업 탐색과 원본 보존 · v3.3 개발 완료와 기존 운영 상태를 분리해 최신화",
+  "build-log": "날짜·분야·작업 탐색과 원본 보존 · v3.3 개발·운영 결과와 과거 원문을 분리해 최신화",
   "access-api": "요청·승인·동의·대상·링크·세션과 보호 자료의 서버 인증 연동 완료",
-  "release": "1차 운영과 후속 관리자·권한 개선 검증 완료 · 새 UI v3.3의 운영 반영은 보류",
+  "release": "1차 운영과 후속 관리자·권한 개선 검증 완료 · UI v3.3 반영·관리자 읽기와 로그아웃 후 캐시 경계 확인 완료",
 };
 const recentTasks: typeof tasks = [
   { id: "admin-v32", phase: "구현", title: "관리자 UI·대상과 연결 기록 관리", status: "완료", result: "v3.2 및 후속 관리자 UX 반영·운영 읽기 검증 완료 · 기존 데이터 보존" },
   { id: "role-url", phase: "검증·공개", title: "관리자·초대 역할 분리와 안전한 URL 조회", status: "완료", result: "분리 환경 기능8·운영 권한/관리자 읽기·캐시 검증 완료 · 이전 미보관 URL 복원 불가 안내" },
-  { id: "ui-v33", phase: "구현", title: "UI v3.3·테마·모션·Storybook", status: "완료", result: "개발·빌드·반응형·합성 역할·Storybook 검사 완료 · 운영 미반영" },
-  { id: "ui-v33-production", phase: "검증·공개", title: "UI v3.3 운영 반영", status: "예정", result: "사용자 승인 전 보류 · 현재 운영은 기존 검증 버전 유지" },
+  { id: "ui-v33", phase: "구현", title: "UI v3.3·테마·모션·Storybook", status: "완료", result: "개발·빌드·반응형·합성 역할·Storybook 검사 완료 · 운영 반영 완료" },
+  { id: "ui-v33-production", phase: "검증·공개", title: "UI v3.3 운영 반영", status: "완료", result: "2026-11-25 서울 운영 반영 · 두 테마·권한·관리자 읽기·로그아웃 후 캐시 확인 완료" },
 ];
 // The original task array is retained unchanged as a historical snapshot.
 export const currentTasks = [...tasks.map((task) =>
@@ -289,3 +305,4 @@ export const currentTasks = [...tasks.map((task) =>
       }
     : task,
 ), ...recentTasks];
+

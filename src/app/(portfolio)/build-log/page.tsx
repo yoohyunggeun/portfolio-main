@@ -13,20 +13,21 @@ export default function BuildLog() {
         펼쳐봅니다.
       </p>
       <section className="panel concept-card log-current current-release">
-        <span className="log-status">최신 개발 · 운영 보류</span>
+        <span className="log-status">최신 운영 · UI v3.3</span>
         <div>
-          <h2>UI v3.3 개발·검증 완료</h2>
+          <h2>UI v3.3 운영 반영·확인 완료</h2>
           <p className="muted">
             2026.11.25 · 두 테마 · 중앙 슬라이드 · 입자 효과 · Storybook
           </p>
         </div>
       </section>
       <aside className="panel concept-card current-ui-review">
-        <span className="log-status">현재 운영 · v3.2 후속 개선</span>
+        <span className="log-status">개발·운영 검증을 구분해 기록합니다</span>
         <p>
-          운영은 관리자 UX·미발급 대상 처리·관리자와 초대 방문자 역할 분리까지
-          반영한 버전입니다. 최신 운영 확인은 2026.11.25이며, UI v3.3은 개발
-          미리보기와 분리된 시험 환경에서만 검증했습니다. 운영 반영은 보류 중입니다.
+          UI v3.3을 2026.11.25 서울 리전에 반영하고 PC·모바일 두 테마와
+          기존 권한 경계·정상 관리자 조회·로그아웃 후 접근 차단을 확인했습니다.
+          기존 고객 데이터는 변경·삭제하지 않았습니다. Storybook·합성 역할 검사는
+          개발 환경 결과이며 운영의 새 권한 발급 시험과 혼동하지 않습니다.
           과거 기록과 합성·운영 검증 결과는 아래에서 구분해 확인할 수 있습니다.
         </p>
       </aside>
