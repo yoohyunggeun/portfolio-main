@@ -166,9 +166,11 @@ export type RecipientRow = {
   created_at?: string;
   purposeEndedAt?: string | null;
   historyComplete?: boolean;
+  neverIssued?: boolean;
   canEndPurpose?: boolean;
   purposeEndBlockedReason?:
     | "active_permissions"
+    | "recipient_active"
     | "history_unknown"
     | "no_permission_end"
     | null;
